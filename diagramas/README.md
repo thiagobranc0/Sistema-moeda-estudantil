@@ -1,7 +1,7 @@
 
 História de Usuário
 
-* Eu como quero me cadastrar no sistema, informando meu nome, email, CPF, RG, endereço, instituição de ensino e curso, para poder participar do programa de mérito. 
+* Eu como aluno quero me cadastrar no sistema, informando meu nome, email, CPF, RG, endereço, instituição de ensino e curso, para poder participar do programa de mérito. 
 
 * Eu como aluno, quero selecionar minha instituição de ensino em uma lista pré-cadastrada durante o cadastro, para vincular-me corretamente ao programa. 
 
