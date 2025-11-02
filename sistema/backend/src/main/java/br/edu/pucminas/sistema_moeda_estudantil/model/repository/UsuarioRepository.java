@@ -1,6 +1,6 @@
-package br.edu.pucminas.sistema_moeda_estudantil.repository;
+package br.edu.pucminas.sistema_moeda_estudantil.model.repository;
 
-import br.edu.pucminas.sistema_moeda_estudantil.entity.Usuario;
+import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
