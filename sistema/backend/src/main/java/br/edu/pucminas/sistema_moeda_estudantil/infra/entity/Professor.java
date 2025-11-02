@@ -1,4 +1,4 @@
-package br.edu.pucminas.sistema_moeda_estudantil.entity;
+package br.edu.pucminas.sistema_moeda_estudantil.infra.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
