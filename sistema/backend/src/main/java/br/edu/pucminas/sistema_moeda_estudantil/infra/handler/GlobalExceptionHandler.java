@@ -1,7 +1,7 @@
 package br.edu.pucminas.sistema_moeda_estudantil.infra.handler;
 
 import br.edu.pucminas.sistema_moeda_estudantil.model.ErrorResponse;
-import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.UserNotFound;
+import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,8 +11,8 @@ import java.time.OffsetDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFound.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFound exception) {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException exception) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 exception.getMessage()

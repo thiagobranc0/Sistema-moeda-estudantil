@@ -7,6 +7,8 @@ import br.edu.pucminas.sistema_moeda_estudantil.model.repository.UsuarioReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UsuarioBoundaryImpl implements UsuarioBoundary {
 
@@ -20,5 +22,10 @@ public class UsuarioBoundaryImpl implements UsuarioBoundary {
     public void createUsuario(UsuarioDTO usuarioDTO) {
         var user = usuarioMapper.toEntity(usuarioDTO);
         usuarioRepository.save(user);
+    }
+
+    @Override
+    public UsuarioDTO getUsuarioById(UUID id) {
+        return null;
     }
 }

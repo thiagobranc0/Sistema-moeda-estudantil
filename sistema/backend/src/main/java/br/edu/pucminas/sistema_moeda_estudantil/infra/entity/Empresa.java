@@ -20,14 +20,13 @@ public class Empresa {
     @Column(name = "id_usuario")
     private UUID idUsuario;
 
-
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false, foreignKey = @ForeignKey(name = "fk_empresa_usuario"))
     private Usuario usuario;
 
 
-    @Column(nullable = false, length = 18)
+    @Column(nullable = true, length = 18)
     private String cnpj;
 
 

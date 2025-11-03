@@ -26,18 +26,18 @@ public class Aluno {
     @JoinColumn(name = "id_usuario", nullable = false, foreignKey = @ForeignKey(name = "fk_aluno_usuario"))
     private Usuario usuario;
 
-    @Column(nullable = false, length = 14)
+    @Column(nullable = true, length = 14)
     private String cpf;
 
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = true, length = 20)
     private String rg;
 
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = true, length = 255)
     private String endereco;
 
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(nullable = true, precision = 19, scale = 2)
     private BigDecimal saldo = BigDecimal.ZERO;
 }
