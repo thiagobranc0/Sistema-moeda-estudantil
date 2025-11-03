@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS vantagem (
+ id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+ descricao VARCHAR(255) NOT NULL,
+ custo DECIMAL(19, 2) NOT NULL,
+ foto VARCHAR(255),
+ empresa_id UUID NOT NULL,
+ CONSTRAINT fk_vantagem_empresa FOREIGN KEY (empresa_id) REFERENCES empresa(id_usuario)
+);

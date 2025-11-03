@@ -21,10 +21,8 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-
     @Column(nullable = false, length = 120)
     private String nome;
-
 
     @Column(nullable = false, length = 160)
     private String email;

@@ -1,0 +1,21 @@
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 500
+          description: Código HTTP do erro
+        message:
+          type: string
+          example: Internal server error
+          description: Mensagem descritiva do erro
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-09-12T20:00:00Z"
+          description: Horário em que o erro ocorreu

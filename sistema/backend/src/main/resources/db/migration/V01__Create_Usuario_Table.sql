@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS usuario (
+  id UUID PRIMARY KEY,
+  nome VARCHAR(120) NOT NULL,
+  email VARCHAR(160) NOT NULL,
+  tipo VARCHAR(50) NOT NULL,
+  senha VARCHAR(120) NOT NULL,
+  CONSTRAINT uk_usuario_email UNIQUE (email)
+);
