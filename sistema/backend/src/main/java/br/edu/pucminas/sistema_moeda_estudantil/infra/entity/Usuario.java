@@ -1,6 +1,7 @@
 package br.edu.pucminas.sistema_moeda_estudantil.infra.entity;
 
 
+import br.edu.pucminas.sistema_moeda_estudantil.infra.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,9 @@ public class Usuario {
     @Column(nullable = false, length = 160)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoUsuario tipo;
 
     @Column(nullable = false, length = 120)
     private String senha;

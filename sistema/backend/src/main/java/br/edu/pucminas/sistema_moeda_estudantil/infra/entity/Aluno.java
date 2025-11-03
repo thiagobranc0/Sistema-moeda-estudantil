@@ -21,12 +21,10 @@ public class Aluno {
     @Column(name = "id_usuario")
     private UUID idUsuario;
 
-
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false, foreignKey = @ForeignKey(name = "fk_aluno_usuario"))
     private Usuario usuario;
-
 
     @Column(nullable = false, length = 14)
     private String cpf;

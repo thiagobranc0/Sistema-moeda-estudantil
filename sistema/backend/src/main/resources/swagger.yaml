@@ -38,40 +38,40 @@ paths:
   /user:
     post:
       tags:
-        - Payment
-      operationId: sendPayment
-      summary: Send payment
+        - User
+      operationId: userRegistration
+      summary: cadastro de usuario
 #      security: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './dtos/request/mail-request.yaml#/components/schemas/MailRequest'
+              $ref: './dto/request/user-request.yaml#/components/schemas/UserRequest'
       responses:
         201:
           description: Credentials have been sent
-        400:
-          description: Invalid email format (missing '@', '.', or '.gmail')
-          content:
-            application/json:
-              schema:
-                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
-        409:
-          description: Vacancy is already full
-          content:
-            application/json:
-              schema:
-                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
-        424:
-          description: Gmail API error (bad gateway)
-          content:
-            application/json:
-              schema:
-                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
-        500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
+#        400:
+#          description: Invalid email format (missing '@', '.', or '.gmail')
+#          content:
+#            application/json:
+#              schema:
+#                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
+#        409:
+#          description: Vacancy is already full
+#          content:
+#            application/json:
+#              schema:
+#                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
+#        424:
+#          description: Gmail API error (bad gateway)
+#          content:
+#            application/json:
+#              schema:
+#                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
+#        500:
+#          description: Internal server error
+#          content:
+#            application/json:
+#              schema:
+#                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'

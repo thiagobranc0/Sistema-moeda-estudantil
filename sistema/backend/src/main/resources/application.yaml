@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/sistemamoeda
+    username: postgres
+    password: postgres
+  flyway:
+    url: jdbc:postgresql://localhost:5433/sistemamoeda
+    user: postgres
+    password: postgres
+    enabled: true
+    clean-disabled: false
