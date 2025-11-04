@@ -63,3 +63,104 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+  /user/{id}:
+    put:
+      tags:
+        - User
+      operationId: updateUser
+      summary: atualização de usuario
+      #      security: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './dto/request/user-update-request.yaml#/components/schemas/UsuarioUpdateRequestDTO'
+      responses:
+        201:
+          description: Credentials have been sent
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/user-update-response.yaml#/components/schemas/UsuarioUpdateResponseDTO'
+        400:
+          description: Invalid email format (missing '@', '.', or '.gmail')
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - User
+      operationId: getUserById
+      summary: buscar usuario por ID
+      #      security: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Usuário encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/user-update-response.yaml#/components/schemas/UsuarioUpdateResponseDTO'
+        '404':
+          description: Usuário não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - User
+      operationId: deleteUserById
+      summary: Remover usuário por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID do usuário a ser removido
+      responses:
+        '204':
+          description: Usuário removido com sucesso
+        '404':
+          description: Usuário não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+
+

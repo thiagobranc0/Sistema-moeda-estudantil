@@ -3,7 +3,10 @@ package br.edu.pucminas.sistema_moeda_estudantil.infra.mapper;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Usuario;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.enums.TipoUsuario;
 import br.edu.pucminas.sistema_moeda_estudantil.model.UserRequest;
+import br.edu.pucminas.sistema_moeda_estudantil.model.UsuarioUpdateRequestDTO;
+import br.edu.pucminas.sistema_moeda_estudantil.model.UsuarioUpdateResponseDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.UsuarioDTO;
+import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.UsuarioUpdateDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -18,8 +21,19 @@ public interface UsuarioMapper {
     @Mapping(source = "tipo", target = "tipo", qualifiedByName = "stringToTipoUsuario")
     Usuario toEntity(UsuarioDTO usuarioDTO);
 
+    Usuario toEntity(UsuarioUpdateDTO usuarioUpdateDTO);
+    UsuarioUpdateDTO toUsuarioUpdateDTO(Usuario usuario);
+
     @Mapping(source = "tipo", target = "tipo", qualifiedByName = "tipoEnumToString")
     UsuarioDTO toUserDTO(UserRequest userRequest);
+
+    UsuarioDTO toUserDTO(Usuario usuario);
+
+    UsuarioUpdateDTO toUserDTO(UsuarioDTO usuarioDTO);
+
+
+    UsuarioUpdateDTO toUsuarioUpdateDTO(UsuarioUpdateRequestDTO usuarioUpdateRequestDTO);
+    UsuarioUpdateResponseDTO toUsuarioUpdateResponseDTO(UsuarioUpdateDTO usuarioUpdateDTO);
 
     @Named("stringToTipoUsuario")
     default TipoUsuario stringToTipoUsuario(String tipo) {

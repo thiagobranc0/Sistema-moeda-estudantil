@@ -14,6 +14,7 @@ public class UsuarioUpdateDTO {
     private String email;
     private String senha;
 
+
     private String cpf;
     private String rg;
     private String endereco;
@@ -21,4 +22,5 @@ public class UsuarioUpdateDTO {
     private Long departamentoId;
 
     private String cnpj;
+
 }
