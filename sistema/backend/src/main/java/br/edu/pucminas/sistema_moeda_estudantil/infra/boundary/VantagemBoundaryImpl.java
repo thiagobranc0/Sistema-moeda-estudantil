@@ -51,7 +51,7 @@ public class VantagemBoundaryImpl implements VantagemBoundary {
         var empresa = empresaRepository.findById(empresaId);
         var vantagem = vantagemRepository.findById(vantagemId);
 
-        if(empresa.get().getUsuario().getId() != vantagem.get().getEmpresa().getUsuario().getId()){
+        if(!empresa.get().getUsuario().getId().equals(vantagem.get().getEmpresa().getUsuario().getId())){
             throw new EmpresaForbiddenException("Não há vantagem com esse id vinculada a sua empresa!");
         }
 
@@ -74,5 +74,25 @@ public class VantagemBoundaryImpl implements VantagemBoundary {
                 .collect(Collectors.toList());
 
         return vantagemMapper.vantagemEntityListToVantagemDTOList(vantagens);
+    }
+
+    @Override
+    public void deleteVantagem(UUID empresaId, UUID vantagemId) {
+        if(!vantagemRepository.existsById(vantagemId)){
+            throw new UserNotFoundException("Vantagem não encontrada.");
+        }
+        if(!empresaRepository.existsById(empresaId)){
+            throw new UserNotFoundException("Empresa não econtrada!");
+        }
+
+        var empresa = empresaRepository.findById(empresaId);
+        var vantagem = vantagemRepository.findById(vantagemId);
+
+        if(!empresa.get().getUsuario().getId().equals(vantagem.get().getEmpresa().getUsuario().getId())){
+            throw new EmpresaForbiddenException("Não há vantagem com esse id vinculada a sua empresa!");
+        }
+
+        vantagemRepository.deleteById(vantagemId);
+
     }
 }

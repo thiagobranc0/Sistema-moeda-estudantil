@@ -11,4 +11,6 @@ public interface VantagemBoundary {
     VantagemDTO getVantagemById(UUID empresaId, UUID vantagemId);
 
     List<VantagemDTO> listVantagens(UUID empresaId);
+
+    void deleteVantagem(UUID empresaId, UUID vantagemId);
 }

@@ -28,4 +28,8 @@ public class VantagemService {
     public List<VantagemDTO> listVantagens(UUID empresaId) {
         return vantagemBoundaryImpl.listVantagens(empresaId);
     }
+
+    public void deleteVantagem(UUID empresaId, UUID vantagemId) {
+        vantagemBoundaryImpl.deleteVantagem(empresaId, vantagemId);
+    }
 }

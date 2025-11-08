@@ -45,4 +45,10 @@ public class EmpresaController implements VantagemApi {
         var vantagenResponse = vantagemMapper.vantagemDTOListToVantagemResponseDTOList(vantagens);
         return ResponseEntity.ok(vantagenResponse);
     }
+
+    @Override
+    public ResponseEntity<Void> deleteVantagem(UUID empresaId, UUID vantagemId) {
+        vantagemService.deleteVantagem(empresaId, vantagemId);
+        return ResponseEntity.ok().build();
+    }
 }

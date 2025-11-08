@@ -122,6 +122,35 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Vantagem
+      summary: Deletar uma vantagem
+      operationId: deleteVantagem
+      parameters:
+        - name: empresaId
+          in: path
+          required: true
+          description: ID da empresa
+          schema:
+            type: string
+            format: uuid
+        - name: vantagemId
+          in: path
+          required: true
+          description: ID da vantagem
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: deleted
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
 
   /user:
     post:
