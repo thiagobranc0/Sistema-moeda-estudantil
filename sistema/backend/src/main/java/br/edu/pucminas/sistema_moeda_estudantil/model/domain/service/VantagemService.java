@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,5 +23,9 @@ public class VantagemService {
 
     public VantagemDTO getVantagemById(UUID empresaId, UUID vantagemId) {
         return vantagemBoundaryImpl.getVantagemById(empresaId, vantagemId);
+    }
+
+    public List<VantagemDTO> listVantagens(UUID empresaId) {
+        return vantagemBoundaryImpl.listVantagens(empresaId);
     }
 }

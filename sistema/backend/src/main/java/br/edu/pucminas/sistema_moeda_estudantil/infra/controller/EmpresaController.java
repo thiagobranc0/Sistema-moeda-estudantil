@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -38,6 +39,10 @@ public class EmpresaController implements VantagemApi {
         return ResponseEntity.ok(responseDTO);
     }
 
-
-
+    @Override
+    public ResponseEntity<List<VantagemResponseDTO>> listVantagens(UUID empresaId) {
+        var vantagens = vantagemService.listVantagens(empresaId);
+        var vantagenResponse = vantagemMapper.vantagemDTOListToVantagemResponseDTOList(vantagens);
+        return ResponseEntity.ok(vantagenResponse);
+    }
 }

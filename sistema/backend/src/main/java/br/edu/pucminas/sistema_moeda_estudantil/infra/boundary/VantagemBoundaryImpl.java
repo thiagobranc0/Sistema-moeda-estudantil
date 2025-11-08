@@ -10,7 +10,9 @@ import br.edu.pucminas.sistema_moeda_estudantil.model.repository.VantagemReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class VantagemBoundaryImpl implements VantagemBoundary {
@@ -59,5 +61,18 @@ public class VantagemBoundaryImpl implements VantagemBoundary {
         responseDTO.setId(vantagemId);
 
         return responseDTO;
+    }
+
+    @Override
+    public List<VantagemDTO> listVantagens(UUID empresaId) {
+        if(!empresaRepository.existsById(empresaId)){
+            throw new UserNotFoundException("Empresa não econtrada!");
+        }
+
+        var vantagens = vantagemRepository.findAll().stream()
+                .filter(v -> v.getEmpresa().getIdUsuario().equals(empresaId))
+                .collect(Collectors.toList());
+
+        return vantagemMapper.vantagemEntityListToVantagemDTOList(vantagens);
     }
 }

@@ -60,6 +60,28 @@ paths:
           description: Vantagem Criada com Sucesso
         500:
           description: Internal server erro
+    get:
+      tags:
+        - Vantagem
+      summary: List vantagens
+      operationId: listVantagens
+      parameters:
+        - name: empresaId
+          in: path
+          required: true
+          description: ID da empresa
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './dto/response/vantagem-response.yaml#/components/schemas/VantagemResponseDTO'
   /empresa/{empresaId}/vantagens/{vantagemId}:
     get:
       tags:
