@@ -32,4 +32,8 @@ public class VantagemService {
     public void deleteVantagem(UUID empresaId, UUID vantagemId) {
         vantagemBoundaryImpl.deleteVantagem(empresaId, vantagemId);
     }
+
+    public VantagemDTO updateVantagem(UUID empresaId, UUID vantagemId, VantagemDTO vantagem) {
+        return vantagemBoundaryImpl.updateVantagem(empresaId, vantagemId, vantagem);
+    }
 }

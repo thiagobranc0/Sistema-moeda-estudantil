@@ -1,5 +1,6 @@
 package br.edu.pucminas.sistema_moeda_estudantil.infra.boundary;
 
+import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Vantagem;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.mapper.VantagemMapper;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.boundary.VantagemBoundary;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.VantagemDTO;
@@ -93,6 +94,29 @@ public class VantagemBoundaryImpl implements VantagemBoundary {
         }
 
         vantagemRepository.deleteById(vantagemId);
+
+    }
+
+    @Override
+    public VantagemDTO updateVantagem(UUID empresaId, UUID vantagemId, VantagemDTO vantagemDTO) {
+        if(!vantagemRepository.existsById(vantagemId)){
+            throw new UserNotFoundException("Vantagem não encontrada.");
+        }
+        if(!empresaRepository.existsById(empresaId)){
+            throw new UserNotFoundException("Empresa não econtrada!");
+        }
+
+        var empresa = empresaRepository.findById(empresaId);
+        var vantagem = vantagemRepository.findById(vantagemId);
+
+        if(!empresa.get().getUsuario().getId().equals(vantagem.get().getEmpresa().getUsuario().getId())){
+            throw new EmpresaForbiddenException("Não há vantagem com esse id vinculada a sua empresa!");
+        }
+
+        vantagemMapper.updateEntityFromVantagemDTO(vantagemDTO, vantagem.get());
+        Vantagem updatedVantagem = vantagemRepository.save(vantagem.get());
+
+        return vantagemMapper.vantagemToVantagemDTOComId(updatedVantagem);
 
     }
 }

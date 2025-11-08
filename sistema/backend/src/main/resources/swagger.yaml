@@ -122,6 +122,51 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Vantagem
+      summary: Atualização de vantagem
+      operationId: updateVantagem
+      parameters:
+        - name: empresaId
+          in: path
+          required: true
+          description: ID da empresa
+          schema:
+            type: string
+            format: uuid
+        - name: vantagemId
+          in: path
+          required: true
+          description: ID da vantagem
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './dto/request/vantagem-update-request.yaml#/components/schemas/VantagemUpdateDTO'
+      responses:
+        '200':
+          description: Vantagem econtrada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/vantagem-response.yaml#/components/schemas/VantagemResponseDTO'
+        '404':
+          description: Vantagem não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
     delete:
       tags:
         - Vantagem
@@ -144,9 +189,9 @@ paths:
             format: uuid
       responses:
         '204':
-          description: deleted
+          description: vantagem deletada
         '404':
-          description: not found
+          description: Vantagem não encontrada
           content:
             application/json:
               schema:
@@ -279,5 +324,3 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
-
-

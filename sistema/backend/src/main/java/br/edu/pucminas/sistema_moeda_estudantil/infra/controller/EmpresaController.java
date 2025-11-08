@@ -4,6 +4,7 @@ import br.edu.pucminas.sistema_moeda_estudantil.controller.VantagemApi;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.mapper.VantagemMapper;
 import br.edu.pucminas.sistema_moeda_estudantil.model.VantagemRequestDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.VantagemResponseDTO;
+import br.edu.pucminas.sistema_moeda_estudantil.model.VantagemUpdateDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.VantagemDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.service.VantagemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,14 @@ public class EmpresaController implements VantagemApi {
     public ResponseEntity<Void> deleteVantagem(UUID empresaId, UUID vantagemId) {
         vantagemService.deleteVantagem(empresaId, vantagemId);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<VantagemResponseDTO> updateVantagem(UUID empresaId, UUID vantagemId, VantagemUpdateDTO vantagemUpdateDTO) {
+        VantagemDTO vantagem = vantagemMapper.vantagemUpdateDTOToVantagemDTO(vantagemUpdateDTO);
+        vantagem = vantagemService.updateVantagem(empresaId, vantagemId, vantagem);
+        var VantagemResponse = vantagemMapper.vantagemDTOToVantagemResponseDTOComId(vantagem);
+        System.out.println(VantagemResponse);
+        return ResponseEntity.ok(VantagemResponse);
     }
 }
