@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 
 @Getter
@@ -14,8 +15,8 @@ import java.math.BigDecimal;
 @Entity @Table(name = "vantagem")
 public class Vantagem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
 
     @Column(name = "descricao", nullable = false, length = 255)

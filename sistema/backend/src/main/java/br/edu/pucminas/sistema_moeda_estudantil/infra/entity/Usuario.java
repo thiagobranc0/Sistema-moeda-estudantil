@@ -45,4 +45,15 @@ public class Usuario {
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Empresa empresa;
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                ", tipo=" + tipo +
+                ", senha='" + senha + '\'' +
+                '}';
+    }
 }

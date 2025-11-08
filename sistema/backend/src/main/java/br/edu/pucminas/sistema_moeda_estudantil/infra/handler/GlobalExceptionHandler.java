@@ -1,6 +1,7 @@
 package br.edu.pucminas.sistema_moeda_estudantil.infra.handler;
 
 import br.edu.pucminas.sistema_moeda_estudantil.model.ErrorResponse;
+import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.EmpresaForbiddenException;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,16 @@ public class GlobalExceptionHandler {
         ).timestamp(OffsetDateTime.now());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    @ExceptionHandler(EmpresaForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleEmpresaForbiddenException(EmpresaForbiddenException exception) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                exception.getMessage()
+        ).timestamp(OffsetDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
 }

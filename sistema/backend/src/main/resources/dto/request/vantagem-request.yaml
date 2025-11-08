@@ -1,0 +1,22 @@
+components:
+  schemas:
+    VantagemRequestDTO:
+      type: object
+      required:
+        - descricao
+        - custo
+        - foto
+      description: DTO para criar nova vantagem
+      properties:
+        descricao:
+          type: string
+          description: Descrição da vantagem
+          example: "10 dias em um SPA com tudo pago"
+        custo:
+          type: integer
+          description: Custo da vantagem em moedas estudantis
+          example: 10
+        foto:
+          type: string
+          description: URL que leva para uma foto da vantagem
+          example: "https://i.pinimg.com/1200x/b5/62/ed/b562edcbd16c653c477638ecdac409ba.jpg"
