@@ -7,9 +7,7 @@ import br.edu.pucminas.sistema_moeda_estudantil.model.UsuarioUpdateRequestDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.UsuarioUpdateResponseDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.UsuarioDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.UsuarioUpdateDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
@@ -31,9 +29,35 @@ public interface UsuarioMapper {
 
     UsuarioUpdateDTO toUserDTO(UsuarioDTO usuarioDTO);
 
-
+    @Mapping(target = "tipo", expression = "java(inferTipoFromUpdate(usuarioUpdateRequestDTO))")
     UsuarioUpdateDTO toUsuarioUpdateDTO(UsuarioUpdateRequestDTO usuarioUpdateRequestDTO);
     UsuarioUpdateResponseDTO toUsuarioUpdateResponseDTO(UsuarioUpdateDTO usuarioUpdateDTO);
+
+    default TipoUsuario inferTipoFromUpdate(UsuarioUpdateRequestDTO dto) {
+        if (dto == null) return null;
+
+        if (nonBlank(dto.getCnpj())) {
+            return TipoUsuario.EMPRESA;
+        }
+
+        if (nonBlank(dto.getCpf()) || nonBlank(dto.getRg()) || nonBlank(dto.getEndereco())) {
+            return TipoUsuario.ALUNO;
+        }
+
+        // Talvez eu precise colocar professor depois
+        return null;
+    }
+
+    default boolean nonBlank(String s) {
+        return s != null && !s.isBlank();
+    }
+
+    @AfterMapping
+    default void ensureTipo(UsuarioUpdateRequestDTO src, @MappingTarget UsuarioUpdateDTO dest) {
+        if (dest.getTipo() == null) {
+            dest.setTipo(inferTipoFromUpdate(src));
+        }
+    }
 
     @Named("stringToTipoUsuario")
     default TipoUsuario stringToTipoUsuario(String tipo) {

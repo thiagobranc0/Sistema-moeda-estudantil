@@ -35,6 +35,72 @@ paths:
 #              schema:
 #                $ref: './dtos/response/error-response.yaml#/components/schemas/ErrorResponse'
 #
+  /empresa/{empresaId}/vantagens:
+    post:
+      tags:
+        - Vantagem
+      operationId: createVantagem
+      summary: cadastro de uma vantagem por uma empresa
+      parameters:
+        - name: empresaId
+          in: path
+          required: true
+          description: ID da empresa
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './dto/request/vantagem-request.yaml#/components/schemas/VantagemRequestDTO'
+      responses:
+        201:
+          description: Vantagem Criada com Sucesso
+        500:
+          description: Internal server erro
+  /empresa/{empresaId}/vantagens/{vantagemId}:
+    get:
+      tags:
+        - Vantagem
+      operationId: getVantagemById
+      summary: Pegar vantagem por id
+      parameters:
+        - name: empresaId
+          in: path
+          required: true
+          description: ID da empresa
+          schema:
+            type: string
+            format: uuid
+        - name: vantagemId
+          in: path
+          required: true
+          description: ID da vantagem
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Vantagem econtrada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/vantagem-response.yaml#/components/schemas/VantagemResponseDTO'
+        '404':
+          description: Vantagem não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+
   /user:
     post:
       tags:

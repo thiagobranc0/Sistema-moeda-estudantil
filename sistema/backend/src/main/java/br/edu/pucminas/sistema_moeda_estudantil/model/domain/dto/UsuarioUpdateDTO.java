@@ -1,5 +1,6 @@
 package br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto;
 
+import br.edu.pucminas.sistema_moeda_estudantil.infra.enums.TipoUsuario;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ public class UsuarioUpdateDTO {
     private String nome;
     private String email;
     private String senha;
+    private TipoUsuario tipo;
 
 
     private String cpf;
