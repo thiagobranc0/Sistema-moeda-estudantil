@@ -63,7 +63,7 @@ paths:
     get:
       tags:
         - Vantagem
-      summary: List vantagens
+      summary: Lista todas as vantagens de uma empresa específica
       operationId: listVantagens
       parameters:
         - name: empresaId
@@ -87,7 +87,7 @@ paths:
       tags:
         - Vantagem
       operationId: getVantagemById
-      summary: Pegar vantagem por id
+      summary: Lista uma vantagem de uma empresa por id
       parameters:
         - name: empresaId
           in: path
@@ -314,6 +314,33 @@ paths:
           description: Usuário removido com sucesso
         '404':
           description: Usuário não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+  /vantagens:
+    get:
+      tags:
+        - Vantagem
+      operationId: listAllVantagens
+      summary: Pegar todas as vantagens
+      responses:
+        '200':
+          description: Vantagem econtrada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './dto/response/vantagem-response.yaml#/components/schemas/VantagemResponseDTO'
+        '404':
+          description: Vantagem não encontrada
           content:
             application/json:
               schema:

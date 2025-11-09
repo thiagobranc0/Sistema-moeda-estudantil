@@ -78,6 +78,13 @@ public class VantagemBoundaryImpl implements VantagemBoundary {
     }
 
     @Override
+    public List<VantagemDTO> listAllVantagens() {
+        var vantagens = vantagemRepository.findAll();
+
+        return vantagemMapper.vantagemEntityListToVantagemDTOList(vantagens);
+    }
+
+    @Override
     public void deleteVantagem(UUID empresaId, UUID vantagemId) {
         if(!vantagemRepository.existsById(vantagemId)){
             throw new UserNotFoundException("Vantagem não encontrada.");

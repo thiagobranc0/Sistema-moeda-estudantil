@@ -61,4 +61,11 @@ public class EmpresaController implements VantagemApi {
         System.out.println(VantagemResponse);
         return ResponseEntity.ok(VantagemResponse);
     }
+
+    @Override
+    public ResponseEntity<List<VantagemResponseDTO>> listAllVantagens() {
+        var vantagens = vantagemService.listAllVantagens();
+        var vantagensResponse = vantagemMapper.vantagemDTOListToVantagemResponseDTOList(vantagens);
+        return ResponseEntity.ok(vantagensResponse);
+    }
 }

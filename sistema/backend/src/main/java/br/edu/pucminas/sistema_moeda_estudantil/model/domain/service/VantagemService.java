@@ -1,9 +1,9 @@
 package br.edu.pucminas.sistema_moeda_estudantil.model.domain.service;
 
-import br.edu.pucminas.sistema_moeda_estudantil.infra.boundary.UsuarioBoundaryImpl;
+
 import br.edu.pucminas.sistema_moeda_estudantil.infra.boundary.VantagemBoundaryImpl;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.VantagemDTO;
-import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.UserNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,10 @@ public class VantagemService {
 
     public List<VantagemDTO> listVantagens(UUID empresaId) {
         return vantagemBoundaryImpl.listVantagens(empresaId);
+    }
+
+    public List<VantagemDTO> listAllVantagens() {
+        return vantagemBoundaryImpl.listAllVantagens();
     }
 
     public void deleteVantagem(UUID empresaId, UUID vantagemId) {
