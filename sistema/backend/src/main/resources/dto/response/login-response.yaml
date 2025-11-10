@@ -1,0 +1,49 @@
+components:
+  schemas:
+    LoginResponseDTO:
+      type: object
+      description: DTO para atualização de diferentes tipos de usuário
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: id do usuário
+          example: "4bf22b7a-996f-494b-abd1-46c44ef3f05c"
+        nome:
+          type: string
+          description: Nome do usuário
+          example: "João da Silva"
+        email:
+          type: string
+          description: E-mail do usuário
+          format: email
+          example: "joao.silva@example.com"
+        senha:
+          type: string
+          description: Senha do usuário (será armazenada com segurança)
+          format: password
+          example: "********"
+
+        cpf:
+          type: string
+          description: CPF do aluno
+          example: "123.456.789-00"
+        rg:
+          type: string
+          description: RG do aluno
+          example: "MG-12.345.678"
+        endereco:
+          type: string
+          description: Endereço completo do aluno
+          example: "Rua Exemplo, 123 - Bairro - Cidade/UF"
+
+        departamentoId:
+          type: integer
+          format: int64
+          description: ID do departamento ao qual o professor está vinculado
+          example: 42
+
+        cnpj:
+          type: string
+          description: CNPJ da empresa
+          example: "12.345.678/0001-90"

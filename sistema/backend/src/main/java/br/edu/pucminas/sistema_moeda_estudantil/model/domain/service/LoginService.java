@@ -1,5 +1,6 @@
 package br.edu.pucminas.sistema_moeda_estudantil.model.domain.service;
 
+import br.edu.pucminas.sistema_moeda_estudantil.model.LoginResponseDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.boundary.LoginBoundary;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.LoginDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.UsuarioUpdateDTO;
@@ -11,7 +12,7 @@ public class LoginService {
 
     @Autowired private LoginBoundary loginBoundary;
 
-    public UsuarioUpdateDTO login(LoginDTO loginDTO) {
+    public LoginResponseDTO login(LoginDTO loginDTO) {
         return loginBoundary.login(loginDTO);
     }
 }
