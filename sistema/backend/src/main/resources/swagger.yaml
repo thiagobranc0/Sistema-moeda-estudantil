@@ -370,7 +370,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './dto/response/user-update-response.yaml#/components/schemas/UsuarioUpdateResponseDTO'
+                $ref: './dto/response/login-response.yaml#/components/schemas/LoginResponseDTO'
         '500':
           description: Erro interno do servidor
           content:
