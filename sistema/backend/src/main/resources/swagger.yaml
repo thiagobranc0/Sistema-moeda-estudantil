@@ -351,3 +351,29 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+  /auth/login:
+    post:
+      tags:
+        - Login
+      operationId: login
+      summary: Loga o usuário no sistema
+#      security: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './dto/request/login-request.yaml#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/user-update-response.yaml#/components/schemas/UsuarioUpdateResponseDTO'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
