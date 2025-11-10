@@ -8,5 +8,5 @@ components:
         email:
           type: string
           minLength: 6
-          example: "695457"
+          example: "seuemail@mail.com"
   
