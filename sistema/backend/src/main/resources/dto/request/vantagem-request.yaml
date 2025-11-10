@@ -11,7 +11,7 @@ components:
         descricao:
           type: string
           description: Descrição da vantagem
-          example: "10 dias em um SPA com tudo pago"
+          example: "10 dias em Macapá com tudo pago"
         custo:
           type: integer
           description: Custo da vantagem em moedas estudantis

@@ -34,4 +34,15 @@ public class Vantagem {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(name = "fk_vantagem_empresa"))
     private Empresa empresa;
+
+    @Override
+    public String toString() {
+        return "Vantagem{" +
+                "id=" + id +
+                ", descricao='" + descricao + '\'' +
+                ", custo=" + custo +
+                ", foto='" + foto + '\'' +
+                ", empresa=" + empresa.getIdUsuario() +
+                '}';
+    }
 }
