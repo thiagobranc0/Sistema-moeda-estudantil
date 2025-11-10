@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -11,6 +12,7 @@ import {
   Link,
   Divider,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import {
   Visibility,
@@ -18,6 +20,7 @@ import {
   Email,
   Lock,
 } from '@mui/icons-material';
+import { useLogin } from './hooks/useLogin';
 
 
 export default function Login() {
@@ -25,6 +28,32 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const { login, isLoading, isError, error: loginError, isSuccess, data } = useLogin();
+
+  useEffect(() => {
+    if (isError && loginError) {
+      setError(loginError.message || 'Erro ao fazer login');
+    }
+  }, [isError, loginError]);
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      console.log('Login realizado com sucesso:', {
+        id: data.id,
+        nome: data.nome,
+        email: data.email,
+        cpf: data.cpf,
+        rg: data.rg,
+        endereco: data.endereco,
+        departamentoId: data.departamentoId,
+        cnpj: data.cnpj,
+      });
+      setError('');
+      navigate(`/vantagens/${data.id}`);
+    }
+  }, [isSuccess, data, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +64,7 @@ export default function Login() {
       return;
     }
 
-    console.log('Login:', { email, password });
+    login(email);
   };
 
   const handleClickShowPassword = () => {
@@ -49,7 +78,7 @@ export default function Login() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #8EAA94 0%, #8EAA94 100%)',
       }}
     >
       <Container maxWidth="sm">
@@ -68,12 +97,12 @@ export default function Login() {
               gutterBottom
               sx={{
                 fontWeight: 700,
-                color: 'primary.main',
+                color: '#463a4dff',
               }}
             >
               Sistema de Moeda Estudantil
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: '#463a4dff' }}>
               Entre com suas credenciais para acessar o sistema
             </Typography>
           </Box>
@@ -93,6 +122,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               margin="normal"
               variant="outlined"
+              placeholder="Digite seu e-mail"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -137,8 +167,12 @@ export default function Login() {
                 href="#"
                 variant="body2"
                 sx={{
+                  color: '#6C3751',
                   textDecoration: 'none',
-                  '&:hover': { textDecoration: 'underline' },
+                  '&:hover': { 
+                    textDecoration: 'underline',
+                    color: '#52223C',
+                  },
                 }}
               >
                 Esqueceu sua senha?
@@ -150,15 +184,27 @@ export default function Login() {
               fullWidth
               variant="contained"
               size="large"
+              disabled={isLoading}
               sx={{
                 py: 1.5,
                 mb: 2,
                 fontWeight: 600,
                 textTransform: 'none',
                 fontSize: '1rem',
+                bgcolor: '#6C3751',
+                '&:hover': {
+                  bgcolor: '#52223C',
+                },
               }}
             >
-              Entrar
+              {isLoading ? (
+                <>
+                  <CircularProgress size={20} sx={{ color: 'white', mr: 1 }} />
+                  Entrando...
+                </>
+              ) : (
+                'Entrar'
+              )}
             </Button>
 
             <Divider sx={{ my: 2 }}>
@@ -173,9 +219,13 @@ export default function Login() {
                 <Link
                   href="#"
                   sx={{
+                    color: '#6C3751',
                     fontWeight: 600,
                     textDecoration: 'none',
-                    '&:hover': { textDecoration: 'underline' },
+                    '&:hover': { 
+                      textDecoration: 'underline',
+                      color: '#52223C',
+                    },
                   }}
                 >
                   Cadastre-se
