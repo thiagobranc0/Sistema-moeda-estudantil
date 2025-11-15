@@ -46,17 +46,16 @@ export default function VantagemCRUD() {
   });
   const [error, setError] = useState('');
 
-  if (!empresaId) {
-    return (
-      <Container>
-        <Alert severity="error" sx={{ mt: 4 }}>
-          ID da empresa não foi fornecido na URL
-        </Alert>
-      </Container>
-    );
-  }
+  // Determinar o tipo de usuário baseado nos dados armazenados no localStorage
+  const userDataStr = localStorage.getItem('userData');
+  const userData = userDataStr ? JSON.parse(userDataStr) : null;
+  const isEmpresa = userData?.cnpj !== undefined && userData?.cnpj !== null;
 
-  const { vantagens, isLoading, isError, error: fetchError, refetch } = useGetVantagens(empresaId);
+  // Para EMPRESA: usa empresaId da URL e chama getVantagens(empresaId)
+  // Para ALUNO: chama getAllVantagens() sem empresaId
+  const { vantagens, isLoading, isError, error: fetchError, refetch } = useGetVantagens(
+    isEmpresa ? empresaId : undefined
+  );
   const { createVantagem, isLoading: isCreating, isSuccess: createSuccess } = useCreateVantagem();
   const { updateVantagem, isLoading: isUpdating, isSuccess: updateSuccess } = useUpdateVantagem();
   const { deleteVantagem, isLoading: isDeleting } = useDeleteVantagem();
@@ -100,6 +99,11 @@ export default function VantagemCRUD() {
   };
 
   const handleSubmit = () => {
+    if (!isEmpresa || !empresaId) {
+      setError('Apenas empresas podem gerenciar vantagens');
+      return;
+    }
+
     if (!formData.descricao || formData.custo <= 0) {
       setError('Por favor, preencha todos os campos obrigatórios');
       return;
@@ -130,7 +134,7 @@ export default function VantagemCRUD() {
   };
 
   const handleConfirmDelete = () => {
-    if (vantagemToDelete) {
+    if (vantagemToDelete && empresaId) {
       deleteVantagem({ empresaId, vantagemId: vantagemToDelete });
       handleCloseDeleteDialog();
     }
@@ -156,28 +160,33 @@ export default function VantagemCRUD() {
 
   return (
     <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-      <Header title="Gerenciar Vantagens" />
+      <Header title={isEmpresa ? "Gerenciar Vantagens" : "Vantagens Disponíveis"} />
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => handleOpenDialog()}
-            size="large"
-            sx={{
-              bgcolor: '#6C3751',
-              '&:hover': {
-                bgcolor: '#52223C',
-              },
-            }}
-          >
-            Nova Vantagem
-          </Button>
-        </Box>
+        {isEmpresa && (
+          <Box sx={{ mb: 4, display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => handleOpenDialog()}
+              size="large"
+              sx={{
+                bgcolor: '#6C3751',
+                '&:hover': {
+                  bgcolor: '#52223C',
+                },
+              }}
+            >
+              Nova Vantagem
+            </Button>
+          </Box>
+        )}
 
         {vantagens.length === 0 ? (
           <Alert severity="info">
-            Nenhuma vantagem cadastrada. Clique em "Nova Vantagem" para criar uma.
+            {isEmpresa 
+              ? 'Nenhuma vantagem cadastrada. Clique em "Nova Vantagem" para criar uma.'
+              : 'Nenhuma vantagem disponível no momento.'
+            }
           </Alert>
         ) : (
           <Grid container spacing={3}>
@@ -221,28 +230,30 @@ export default function VantagemCRUD() {
                       }}
                     />
                   </CardContent>
-                  <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleOpenDialog(vantagem)}
-                      sx={{
-                        color: '#6C3751',
-                        '&:hover': {
-                          bgcolor: 'rgba(108, 55, 81, 0.1)',
-                        },
-                      }}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => handleOpenDeleteDialog(vantagem.id)}
-                      disabled={isDeleting}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardActions>
+                  {isEmpresa && (
+                    <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleOpenDialog(vantagem)}
+                        sx={{
+                          color: '#6C3751',
+                          '&:hover': {
+                            bgcolor: 'rgba(108, 55, 81, 0.1)',
+                          },
+                        }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleOpenDeleteDialog(vantagem.id)}
+                        disabled={isDeleting}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </CardActions>
+                  )}
                 </Card>
               </Grid>
             ))}
