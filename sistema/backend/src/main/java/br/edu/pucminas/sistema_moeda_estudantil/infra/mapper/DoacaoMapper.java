@@ -13,6 +13,7 @@ import org.mapstruct.Mapping;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
@@ -32,9 +33,15 @@ public interface DoacaoMapper {
 
     @Mapping(target = "idProfessor", source = "professor.idUsuario")
     @Mapping(target = "idAluno", source = "aluno.idUsuario")
+    @Mapping(target = "nomeProfessor", source = "professor.usuario.nome")
+    @Mapping(target = "nomeAluno", source = "aluno.usuario.nome")
     DoacaoDTO doacaoEntityDTOToDoacaoDTO(DoacaoMoeda doacao);
 
     DoacaoResponseDTO doacaoDTOToDoacaoResponseDTO(DoacaoDTO doacaoDTO);
+
+    List<DoacaoDTO> doacaoEntityListToDoacaoDTOList(List<DoacaoMoeda> doacoes);
+
+    List<DoacaoResponseDTO> doacaoDTOListToDoacaoResponseDTOList(List<DoacaoDTO> doacoesDTO);
 
     default Aluno toAluno(UUID id) {
         if (id == null) return null;

@@ -5,6 +5,9 @@ import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.DoacaoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 public class DoacaoService {
 
@@ -13,5 +16,13 @@ public class DoacaoService {
 
     public DoacaoDTO doar(DoacaoDTO doacaoDTO){
         return doacaoBoundary.doar(doacaoDTO);
+    }
+
+    public List<DoacaoDTO> getProfessorDonations(UUID professorId) {
+        return doacaoBoundary.getProfessorDonations(professorId);
+    }
+
+    public List<DoacaoDTO> getAlunoDonations(UUID alunoId) {
+        return doacaoBoundary.getAlunoDonations(alunoId);
     }
 }

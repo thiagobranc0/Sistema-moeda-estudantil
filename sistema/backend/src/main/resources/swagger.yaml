@@ -377,7 +377,62 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+  /alunos/{alunoId}/doacoes:
+    get:
+      tags:
+        - Doacao
+      operationId: getAlunoDonations
+      summary: Extrato de doações recebidas por um aluno
+      parameters:
+        - name: alunoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Extrato econtrado
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './dto/response/doacao-reponse.yaml#/components/schemas/DoacaoResponseDTO'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
   /professores/{professorId}/doacoes:
+    get:
+      tags:
+        - Doacao
+      operationId: getProfessorDonations
+      summary: Extrato de doações feitas por um professor
+      parameters:
+        - name: professorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Extrato econtrado
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './dto/response/doacao-reponse.yaml#/components/schemas/DoacaoResponseDTO'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
     post:
       tags:
         - Doacao
@@ -403,7 +458,7 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/doacao-reponse.yaml#/components/schemas/DoacaoResponseDTO'
-        '500':
+        '406':
           description: Erro interno do servidor
           content:
             application/json:

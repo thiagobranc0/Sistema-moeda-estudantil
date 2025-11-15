@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class DaocaoBoundaryImpl implements DoacaoBoundary {
@@ -68,10 +70,30 @@ public class DaocaoBoundaryImpl implements DoacaoBoundary {
 
         doacaoDTO.setNomeAluno(usuarioRepository.findById(doacaoDTO.getIdAluno()).get().getNome());
         doacaoDTO.setNomeProfessor(usuarioRepository.findById(doacaoDTO.getIdProfessor()).get().getNome());
-        doacaoDTO.setIdAluno(usuarioRepository.findById(doacaoDTO.getIdAluno()).get().getId());
-        doacaoDTO.setIdProfessor(usuarioRepository.findById(doacaoDTO.getIdProfessor()).get().getId());
 
         return doacaoDTO;
 
+    }
+
+    @Override
+    public List<DoacaoDTO> getProfessorDonations(UUID professorId) {
+        if(!professorRepository.existsById(professorId)) {
+            throw new UserNotFoundException("Professor não encontrado!");
+        }
+
+        List<DoacaoMoeda> doacoes = doacaoRepository.findAllByProfessor_IdUsuarioOrderByDataDoacaoDesc(professorId);
+
+        return doacaoMapper.doacaoEntityListToDoacaoDTOList(doacoes);
+    }
+
+    @Override
+    public List<DoacaoDTO> getAlunoDonations(UUID alunoId) {
+        if(!alunoRepository.existsById(alunoId)) {
+            throw new UserNotFoundException("Professor não encontrado!");
+        }
+
+        List<DoacaoMoeda> doacoes = doacaoRepository.findAllByAluno_IdUsuarioOrderByDataDoacaoDesc(alunoId);
+
+        return doacaoMapper.doacaoEntityListToDoacaoDTOList(doacoes);
     }
 }
