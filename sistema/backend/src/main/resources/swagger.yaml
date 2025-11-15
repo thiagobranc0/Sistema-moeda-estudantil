@@ -377,3 +377,35 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+  /professores/{professorId}/doacoes:
+    post:
+      tags:
+        - Doacao
+      operationId: donate
+      summary: Fazer uma doação para um aluno
+      parameters:
+        - name: professorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './dto/request/doacao-request.yaml#/components/schemas/DoacaoRequestDTO'
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/doacao-reponse.yaml#/components/schemas/DoacaoResponseDTO'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
