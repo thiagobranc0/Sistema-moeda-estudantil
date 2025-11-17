@@ -15,6 +15,7 @@ import java.util.UUID;
 @Data
 public class DoacaoDTO {
     UUID id;
+    String email;
     UUID idProfessor;
     String nomeProfessor;
     UUID idAluno;

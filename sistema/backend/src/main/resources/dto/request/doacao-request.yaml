@@ -4,15 +4,14 @@ components:
       type: object
       description: DTO de requisição de vantagem
       required:
-        - idAluno
+        - email
         - valor
         - mensagem
       properties:
-        idAluno:
+        email:
           type: string
-          format: uuid
-          description: id do aluno destinatário.
-          example: "4bf22b7a-996f-494b-abd1-46c44ef3f05c"
+          description: email do aluno destinatário.
+          example: "aluno@gmail.com"
         valor:
           type: number
           format: double
