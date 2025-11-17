@@ -23,6 +23,11 @@ export const vantagemService = {
     return response.data;
   },
 
+  getAllVantagens: async (): Promise<Vantagem[]> => {
+    const response = await api.get<Vantagem[]>('/vantagens');
+    return response.data;
+  },
+
   createVantagem: async (empresaId: string, vantagemData: Omit<Vantagem, 'id'>): Promise<Vantagem> => {
     const response = await api.post<Vantagem>(`/empresa/${empresaId}/vantagens`, vantagemData);
     return response.data;

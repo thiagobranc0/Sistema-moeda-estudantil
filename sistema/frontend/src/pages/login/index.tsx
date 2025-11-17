@@ -50,6 +50,10 @@ export default function Login() {
         departamentoId: data.departamentoId,
         cnpj: data.cnpj,
       });
+      
+      // Salvar dados do usuário no localStorage
+      localStorage.setItem('userData', JSON.stringify(data));
+      
       setError('');
       navigate(`/vantagens/${data.id}`);
     }

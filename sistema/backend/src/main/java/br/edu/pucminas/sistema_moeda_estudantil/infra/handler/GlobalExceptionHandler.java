@@ -3,10 +3,13 @@ package br.edu.pucminas.sistema_moeda_estudantil.infra.handler;
 import br.edu.pucminas.sistema_moeda_estudantil.model.ErrorResponse;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.EmpresaForbiddenException;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.UserNotFoundException;
+import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.ValorInvalidoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @ControllerAdvice
@@ -40,6 +43,16 @@ public class GlobalExceptionHandler {
         ).timestamp(OffsetDateTime.now());
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(ValorInvalidoException.class)
+    public ResponseEntity<ErrorResponse> handleValorInvalidoException(ValorInvalidoException exception) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                exception.getMessage()
+        ).timestamp(OffsetDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(error);
     }
 
 }

@@ -1,0 +1,42 @@
+components:
+  schemas:
+    DoacaoResponseDTO:
+      type: object
+      description: DTO de retorno de doação criada com sucesso
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: id da vantagem
+          example: "4bf22b7a-996f-494b-abd1-46c44ef3f05c"
+        idProfessor:
+          type: string
+          format: uuid
+          description: id do professor doador
+          example: "4bf22b7a-996f-494b-abd1-46c44ef3f05c"
+        nomeProfessor:
+          type: string
+          description: Nome do professor doador
+          example: "Hugo de Paula"
+        idAluno:
+          type: string
+          format: uuid
+          description: id do aluno destinatário
+          example: "4bf22b7a-996f-494b-abd1-46c44ef3f05c"
+        nomeAluno:
+          type: string
+          description: Nome do aluno destinatário
+          example: "Flathos Marques"
+        mensagem:
+          type: string
+          description: Mensagem de reconhecimento do professor para o aluno
+          example: "Veja bem, receba 10 moedas pela prova porcaria"
+        valor:
+          type: number
+          format: double
+          description: Valor da doação do professor para o aluno
+          example: 10
+        dataDoacao:
+          type: string
+          format: date-time
+          example: "2025-01-30T14:37:00"

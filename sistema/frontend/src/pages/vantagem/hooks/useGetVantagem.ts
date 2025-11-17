@@ -18,11 +18,11 @@ export const useGetVantagem = (empresaId: string, vantagemId: string) => {
   };
 };
 
-export const useGetVantagens = (empresaId: string) => {
+export const useGetVantagens = (empresaId?: string) => {
   const { data: vantagens, isLoading, isError, error, refetch } = useQuery<Vantagem[]>({
-    queryKey: ["GET_VANTAGENS", empresaId],
-    queryFn: () => vantagemService.getVantagens(empresaId),
-    enabled: !!empresaId,
+    queryKey: empresaId ? ["GET_VANTAGENS", empresaId] : ["GET_ALL_VANTAGENS"],
+    queryFn: () => empresaId ? vantagemService.getVantagens(empresaId) : vantagemService.getAllVantagens(),
+    enabled: true,
   });
 
   return {
