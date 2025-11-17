@@ -6,7 +6,6 @@ import {
   TextField,
   Button,
   Typography,
-  Paper,
   InputAdornment,
   IconButton,
   Link,
@@ -21,6 +20,7 @@ import {
   Lock,
 } from '@mui/icons-material';
 import { useLogin } from './hooks/useLogin';
+import { useAuth } from '../../shared/context/AuthContext';
 
 
 export default function Login() {
@@ -31,6 +31,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   const { login, isLoading, isError, error: loginError, isSuccess, data } = useLogin();
+  const { setUser } = useAuth();
 
   useEffect(() => {
     if (isError && loginError) {
@@ -51,8 +52,8 @@ export default function Login() {
         cnpj: data.cnpj,
       });
       
-      // Salvar dados do usuário no localStorage
-      localStorage.setItem('userData', JSON.stringify(data));
+      // Salvar dados do usuário no contexto (e localStorage via provider)
+      setUser(data);
       
       setError('');
       navigate(`/vantagens/${data.id}`);
@@ -82,16 +83,17 @@ export default function Login() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #8EAA94 0%, #8EAA94 100%)',
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
       }}
     >
       <Container maxWidth="sm">
-        <Paper
-          elevation={10}
+        <Box
           sx={{
             p: 4,
             borderRadius: 3,
-            backdropFilter: 'blur(10px)',
+            bgcolor: '#2d2d2d',
+            color: '#e0e0e0',
+            border: '1px solid #444',
           }}
         >
           <Box sx={{ mb: 3, textAlign: 'center' }}>
@@ -101,18 +103,18 @@ export default function Login() {
               gutterBottom
               sx={{
                 fontWeight: 700,
-                color: '#463a4dff',
+                color: '#f0f0f0',
               }}
             >
               Sistema de Moeda Estudantil
             </Typography>
-            <Typography variant="body2" sx={{ color: '#463a4dff' }}>
+            <Typography variant="body2" sx={{ color: '#b0b0b0' }}>
               Entre com suas credenciais para acessar o sistema
             </Typography>
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2, bgcolor: '#3d2020', color: '#ff6b6b', border: '1px solid #8b3a3a' }}>
               {error}
             </Alert>
           )}
@@ -130,11 +132,21 @@ export default function Login() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Email color="action" />
+                    <Email color="action" sx={{ color: '#b0b0b0' }} />
                   </InputAdornment>
                 ),
               }}
-              sx={{ mb: 2 }}
+              sx={{
+                mb: 2,
+                '& .MuiOutlinedInput-root': {
+                  color: '#e0e0e0',
+                  '& fieldset': { borderColor: '#444' },
+                  '&:hover fieldset': { borderColor: '#ff6b6b' },
+                  '&.Mui-focused fieldset': { borderColor: '#ff6b6b' },
+                },
+                '& .MuiInputLabel-root': { color: '#b0b0b0' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#ff6b6b' },
+              }}
             />
 
             <TextField
@@ -148,7 +160,7 @@ export default function Login() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock color="action" />
+                    <Lock color="action" sx={{ color: '#b0b0b0' }} />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -157,13 +169,24 @@ export default function Login() {
                       onClick={handleClickShowPassword}
                       edge="end"
                       aria-label="toggle password visibility"
+                      sx={{ color: '#b0b0b0' }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
-              sx={{ mb: 1 }}
+              sx={{
+                mb: 1,
+                '& .MuiOutlinedInput-root': {
+                  color: '#e0e0e0',
+                  '& fieldset': { borderColor: '#444' },
+                  '&:hover fieldset': { borderColor: '#ff6b6b' },
+                  '&.Mui-focused fieldset': { borderColor: '#ff6b6b' },
+                },
+                '& .MuiInputLabel-root': { color: '#b0b0b0' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#ff6b6b' },
+              }}
             />
 
             <Box sx={{ textAlign: 'right', mb: 3 }}>
@@ -171,11 +194,11 @@ export default function Login() {
                 href="#"
                 variant="body2"
                 sx={{
-                  color: '#6C3751',
+                  color: '#ff6b6b',
                   textDecoration: 'none',
                   '&:hover': { 
                     textDecoration: 'underline',
-                    color: '#52223C',
+                    color: '#ff5252',
                   },
                 }}
               >
@@ -195,9 +218,10 @@ export default function Login() {
                 fontWeight: 600,
                 textTransform: 'none',
                 fontSize: '1rem',
-                bgcolor: '#6C3751',
+                bgcolor: '#ff6b6b',
+                color: '#fff',
                 '&:hover': {
-                  bgcolor: '#52223C',
+                  bgcolor: '#ff5252',
                 },
               }}
             >
@@ -211,24 +235,24 @@ export default function Login() {
               )}
             </Button>
 
-            <Divider sx={{ my: 2 }}>
-              <Typography variant="body2" color="text.secondary">
+            <Divider sx={{ my: 2, bgcolor: '#444' }}>
+              <Typography variant="body2" sx={{ color: '#b0b0b0' }}>
                 ou
               </Typography>
             </Divider>
 
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: '#b0b0b0' }}>
                 Não tem uma conta?{' '}
                 <Link
                   href="#"
                   sx={{
-                    color: '#6C3751',
+                    color: '#ff6b6b',
                     fontWeight: 600,
                     textDecoration: 'none',
                     '&:hover': { 
                       textDecoration: 'underline',
-                      color: '#52223C',
+                      color: '#ff5252',
                     },
                   }}
                 >
@@ -237,7 +261,7 @@ export default function Login() {
               </Typography>
             </Box>
           </form>
-        </Paper>
+        </Box>
       </Container>
     </Box>
   );
