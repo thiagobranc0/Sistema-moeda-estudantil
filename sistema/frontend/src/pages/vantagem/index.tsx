@@ -25,19 +25,30 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   CardGiftcard as VoucherIcon,
+  ShoppingCart as ShoppingCartIcon,
+  WarningAmberOutlined as WarningIcon,
 } from '@mui/icons-material';
 import { useGetVantagens } from './hooks/useGetVantagem';
 import { useCreateVantagem } from './hooks/useCreateVantagem';
 import { useUpdateVantagem } from './hooks/useUpdateVantagem';
 import { useDeleteVantagem } from './hooks/useDeleteVantagem';
+import { useResgatarVantagem } from './hooks/useResgatarVantagem';
+import { useAuth } from '../../shared/context/AuthContext';
+import { useGetBalance } from '../../pages/transactions/hooks/useTransactions';
 import type { Vantagem } from '../../shared/service/vantagemService';
 import Header from '../../shared/components/Header';
 
 export default function VantagemCRUD() {
   const { empresaId } = useParams<{ empresaId: string }>(); 
+  const { user } = useAuth();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openResgatoDialog, setOpenResgatoDialog] = useState(false);
+  const [openConfirmResgatoDialog, setOpenConfirmResgatoDialog] = useState(false);
+  const [resgatoMensagem, setResgatoMensagem] = useState('');
+  const [regatoCupom, setRegatoCupom] = useState('');
   const [vantagemToDelete, setVantagemToDelete] = useState<string | null>(null);
+  const [vantagemToResgatar, setVantagemToResgatar] = useState<Vantagem | null>(null);
   const [editingVantagem, setEditingVantagem] = useState<Vantagem | null>(null);
   const [formData, setFormData] = useState({
     descricao: '',
@@ -56,6 +67,8 @@ export default function VantagemCRUD() {
   const { vantagens, isLoading, isError, error: fetchError, refetch } = useGetVantagens(
     isEmpresa ? empresaId : undefined
   );
+  const { balance } = useGetBalance(user?.id);
+  const { resgatar, isResgatando } = useResgatarVantagem(user?.id);
   const { createVantagem, isLoading: isCreating, isSuccess: createSuccess } = useCreateVantagem();
   const { updateVantagem, isLoading: isUpdating, isSuccess: updateSuccess } = useUpdateVantagem();
   const { deleteVantagem, isLoading: isDeleting } = useDeleteVantagem();
@@ -140,6 +153,42 @@ export default function VantagemCRUD() {
     }
   };
 
+  const handleOpenConfirmResgato = (vantagem: Vantagem) => {
+    setVantagemToResgatar(vantagem);
+    setOpenConfirmResgatoDialog(true);
+  };
+
+  const handleCloseConfirmResgato = () => {
+    setOpenConfirmResgatoDialog(false);
+    setVantagemToResgatar(null);
+  };
+
+  const handleConfirmResgato = () => {
+    if (!vantagemToResgatar) return;
+
+    // Verificar se o usuário tem saldo suficiente
+    if (balance < vantagemToResgatar.custo) {
+      setError(`Saldo insuficiente. Você tem ${balance} moedas e precisa de ${vantagemToResgatar.custo}`);
+      handleCloseConfirmResgato();
+      return;
+    }
+
+    // Realizar o resgate
+    resgatar(vantagemToResgatar.id, {
+      onSuccess: (data) => {
+        setRegatoCupom(data.cupom);
+        setResgatoMensagem(data.mensagem || 'Vantagem resgatada com sucesso!');
+        setOpenResgatoDialog(true);
+        handleCloseConfirmResgato();
+        refetch();
+      },
+      onError: (error: any) => {
+        setError(error?.message || 'Erro ao resgatar vantagem');
+        handleCloseConfirmResgato();
+      },
+    });
+  };
+
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -159,8 +208,8 @@ export default function VantagemCRUD() {
   }
 
   return (
-    <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-      <Header title={isEmpresa ? "Gerenciar Vantagens" : "Vantagens Disponíveis"} />
+    <Box sx={{ bgcolor: '#1a1a1a', minHeight: '100vh' }}>
+      <Header />
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {isEmpresa && (
           <Box sx={{ mb: 4, display: 'flex', justifyContent: 'flex-end' }}>
@@ -170,9 +219,9 @@ export default function VantagemCRUD() {
               onClick={() => handleOpenDialog()}
               size="large"
               sx={{
-                bgcolor: '#6C3751',
+                bgcolor: '#ff6b6b',
                 '&:hover': {
-                  bgcolor: '#52223C',
+                  bgcolor: '#ff5252',
                 },
               }}
             >
@@ -182,7 +231,7 @@ export default function VantagemCRUD() {
         )}
 
         {vantagens.length === 0 ? (
-          <Alert severity="info">
+          <Alert severity="info" sx={{ bgcolor: '#3d3d3d', color: '#e0e0e0', border: '1px solid #555' }}>
             {isEmpresa 
               ? 'Nenhuma vantagem cadastrada. Clique em "Nova Vantagem" para criar uma.'
               : 'Nenhuma vantagem disponível no momento.'
@@ -192,8 +241,8 @@ export default function VantagemCRUD() {
           <Grid container spacing={3}>
             {vantagens.map((vantagem) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={vantagem.id}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  {vantagem.foto && (
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#2d2d2d', color: '#e0e0e0' }}>
+                  {vantagem.foto ? (
                     <CardMedia
                       component="img"
                       height="200"
@@ -201,13 +250,32 @@ export default function VantagemCRUD() {
                       alt={vantagem.descricao}
                       sx={{ objectFit: 'cover' }}
                     />
+                  ) : (
+                    <Box
+                      component="img"
+                      src="https://images.unsplash.com/photo-1518546305927-30cf4ba20d7f?w=400&h=200&fit=crop&q=80"
+                      alt="Bitcoin"
+                      sx={{
+                        height: 200,
+                        width: '100%',
+                        objectFit: 'cover',
+                        backgroundColor: '#1a1a1a',
+                      }}
+                      onError={(e) => {
+                        const img = e.currentTarget as HTMLImageElement;
+                        img.style.display = 'none';
+                        if (img.nextElementSibling) {
+                          (img.nextElementSibling as HTMLElement).style.display = 'flex';
+                        }
+                      }}
+                    />
                   )}
                   {!vantagem.foto && (
                     <Box
                       sx={{
                         height: 200,
                         bgcolor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        display: 'flex',
+                        display: 'none',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
@@ -216,7 +284,7 @@ export default function VantagemCRUD() {
                     </Box>
                   )}
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                    <Typography variant="body1" sx={{ mb: 2, color: '#b0b0b0' }}>
                       {vantagem.descricao}
                     </Typography>
                     <Chip
@@ -224,7 +292,7 @@ export default function VantagemCRUD() {
                       size="small"
                       sx={{
                         bgcolor: '#463a4dff',
-                        color: 'white',
+                        color: '#f0f0f0',
                         fontWeight: 600,
                         border: '2px solid #463a4dff',
                       }}
@@ -252,6 +320,39 @@ export default function VantagemCRUD() {
                       >
                         <DeleteIcon />
                       </IconButton>
+                    </CardActions>
+                  )}
+                  {!isEmpresa && (
+                    <CardActions sx={{ justifyContent: 'center', p: 2 }}>
+                      <Button
+                        variant="contained"
+                        size="large"
+                        startIcon={<ShoppingCartIcon />}
+                        disabled={isResgatando || balance < vantagem.custo}
+                        onClick={() => handleOpenConfirmResgato(vantagem)}
+                        sx={{
+                          bgcolor: balance < vantagem.custo ? '#999' : '#ff6b6b',
+                          color: '#fff',
+                          fontWeight: 700,
+                          borderRadius: '20px',
+                          px: 3,
+                          py: 1.5,
+                          textTransform: 'none',
+                          fontSize: '0.95rem',
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            bgcolor: balance < vantagem.custo ? '#999' : '#ff5252',
+                            transform: 'scale(1.05)',
+                            boxShadow: '0 4px 12px rgba(255, 107, 107, 0.3)',
+                          },
+                          '&:disabled': {
+                            bgcolor: '#999',
+                            color: '#ddd',
+                          },
+                        }}
+                      >
+                        {balance < vantagem.custo ? 'Saldo Insuficiente' : 'Resgatar'}
+                      </Button>
                     </CardActions>
                   )}
                 </Card>
@@ -307,9 +408,9 @@ export default function VantagemCRUD() {
               variant="contained"
               disabled={isCreating || isUpdating}
               sx={{
-                bgcolor: '#6C3751',
+                bgcolor: '#ff6b6b',
                 '&:hover': {
-                  bgcolor: '#52223C',
+                  bgcolor: '#ff5252',
                 },
               }}
             >
@@ -350,6 +451,135 @@ export default function VantagemCRUD() {
               ) : (
                 'Excluir'
               )}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={openConfirmResgatoDialog} onClose={handleCloseConfirmResgato} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#6C3751', fontWeight: 600 }}>
+            <WarningIcon />
+            Confirmar Resgate
+          </DialogTitle>
+          <DialogContent sx={{ pt: 3 }}>
+            {vantagemToResgatar && (
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography sx={{ mb: 2, fontSize: '0.95rem' }}>
+                  Você deseja resgatar a vantagem:
+                </Typography>
+                <Typography sx={{ fontWeight: 600, fontSize: '1.1rem', mb: 3, color: '#463a4dff' }}>
+                  {vantagemToResgatar.descricao}
+                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 3 }}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 1 }}>
+                      Custo
+                    </Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: '#6C3751' }}>
+                      {vantagemToResgatar.custo}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.75rem', color: '#666' }}>
+                      moedas
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 1 }}>
+                      Seu Saldo
+                    </Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: balance >= vantagemToResgatar.custo ? '#4CAF50' : '#f44336' }}>
+                      {balance}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.75rem', color: '#666' }}>
+                      moedas
+                    </Typography>
+                  </Box>
+                </Box>
+                {balance >= vantagemToResgatar.custo ? (
+                  <Alert severity="success">
+                    Você tem saldo suficiente para realizar este resgate.
+                  </Alert>
+                ) : (
+                  <Alert severity="error">
+                    Saldo insuficiente! Você precisa de {vantagemToResgatar.custo - balance} moedas a mais.
+                  </Alert>
+                )}
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ p: 3, justifyContent: 'space-between' }}>
+            <Button onClick={handleCloseConfirmResgato} disabled={isResgatando}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleConfirmResgato}
+              variant="contained"
+              disabled={isResgatando || !vantagemToResgatar || balance < vantagemToResgatar.custo}
+              sx={{
+                bgcolor: '#ff6b6b',
+                '&:hover': {
+                  bgcolor: '#ff5252',
+                },
+              }}
+            >
+              {isResgatando ? (
+                <>
+                  <CircularProgress size={20} sx={{ color: 'white', mr: 1 }} />
+                  Resgatando...
+                </>
+              ) : (
+                'Confirmar Resgate'
+              )}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={openResgatoDialog} onClose={() => setOpenResgatoDialog(false)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ textAlign: 'center', fontWeight: 600 }}>
+            ✓ Cupom de Resgate
+          </DialogTitle>
+          <DialogContent sx={{ pt: 3, textAlign: 'center' }}>
+            <Typography sx={{ mb: 3, fontSize: '0.95rem' }}>
+              {resgatoMensagem}
+            </Typography>
+            <Box
+              sx={{
+                p: 2,
+                bgcolor: '#2d2d2d',
+                borderRadius: 1,
+                border: '2px solid #f0f0f0',
+              }}
+            >
+              <Typography sx={{ fontSize: '0.75rem', color: '#e0e0e0', mb: 1 }}>
+                Código do Cupom
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: '1.5rem',
+                  fontWeight: 700,
+                  color: '#f0f0f0',
+                  fontFamily: 'monospace',
+                  letterSpacing: 2,
+                }}
+              >
+                {regatoCupom}
+              </Typography>
+            </Box>
+            <Typography sx={{ mt: 3, fontSize: '0.85rem', color: '#e0e0e0' }}>
+              Apresente este código no local indicado para validar seu resgate.
+            </Typography>
+          </DialogContent>
+          <DialogActions sx={{ p: 2, justifyContent: 'center' }}>
+            <Button
+              onClick={() => setOpenResgatoDialog(false)}
+              variant="contained"
+              sx={{
+                bgcolor: '#f0f0f0',
+                color: '#000',
+                '&:hover': {
+                  bgcolor: '#e0e0e0',
+                },
+              }}
+            >
+              Fechar
             </Button>
           </DialogActions>
         </Dialog>

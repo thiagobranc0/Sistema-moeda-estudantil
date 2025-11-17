@@ -12,7 +12,7 @@ services:
       - ./data:/var/opt/postgres/data
       - ./log:/var/opt/postgres/log
   app:
-    build: src
+    build: .
     ports:
       - "8081:8080"
     depends_on:

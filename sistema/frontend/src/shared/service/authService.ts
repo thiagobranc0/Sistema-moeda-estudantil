@@ -14,6 +14,7 @@ export interface LoginResponse {
   endereco: string;
   departamentoId?: number;
   cnpj?: string;
+  tipo: 'PROFESSOR' | 'STUDENT' | 'COMPANY';
 }
 
 export const authService = {

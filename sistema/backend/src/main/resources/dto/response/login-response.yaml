@@ -23,7 +23,16 @@ components:
           description: Senha do usuário (será armazenada com segurança)
           format: password
           example: "********"
-
+        tipo:
+          type: string
+          enum: [ ALUNO, PROFESSOR, EMPRESA ]
+          description: Tipo de usuário no sistema
+          example: "ALUNO"
+        saldo:
+          type: number
+          format: double
+          description: Valor da doação (em moedas).
+          example: 50.0
         cpf:
           type: string
           description: CPF do aluno

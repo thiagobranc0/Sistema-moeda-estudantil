@@ -41,4 +41,9 @@ export const vantagemService = {
   deleteVantagem: async (empresaId: string, vantagemId: string): Promise<void> => {
     await api.delete(`/empresa/${empresaId}/vantagens/${vantagemId}`);
   },
+
+  resgatar: async (alunoId: number, vantagemId: string): Promise<{ cupom: string; mensagem: string }> => {
+    const response = await api.post<{ cupom: string; mensagem: string }>(`/alunos/${alunoId}/vantagens/${vantagemId}/resgatar`, {});
+    return response.data;
+  },
 };
