@@ -20,8 +20,7 @@ export default function Header() {
   }
   const isEmpresa = tipoNormalizado === 'COMPANY' || (user?.cnpj !== undefined && user?.cnpj !== null && user.cnpj !== '');
   
-  // Só buscar saldo para alunos
-  const { balance } = useGetBalance(isEmpresa ? undefined : (user?.id ?? undefined));
+  const { balance } = useGetBalance(isEmpresa ? undefined : user?.id);
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);

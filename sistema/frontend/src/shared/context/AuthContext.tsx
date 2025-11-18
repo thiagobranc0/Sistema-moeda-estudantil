@@ -15,7 +15,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem('currentUser');
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      // Mantém o id como está (pode ser UUID string ou número)
       return parsed;
     } catch {
       return null;

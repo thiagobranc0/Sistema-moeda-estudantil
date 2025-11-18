@@ -73,7 +73,6 @@ export default function Extrato() {
           </CardContent>
         </Card>
 
-        {/* Transactions Card */}
         <Card sx={{ bgcolor: '#2d2d2d', color: '#e0e0e0' }}>
           <CardContent>
             <Typography variant="h5" sx={{ color: '#f0f0f0', fontWeight: 600, mb: 3 }}>

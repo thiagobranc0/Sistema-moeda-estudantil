@@ -63,7 +63,6 @@ export const useEnviarDoacao = (professorId: number | string | undefined) => {
   };
 };
 
-// Legacy hooks for backwards compatibility
 export const useGetTransactions = (userId: number | string | undefined) => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['GET_TRANSACTIONS', userId],

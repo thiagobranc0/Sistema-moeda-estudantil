@@ -57,8 +57,6 @@ export default function VantagemCRUD() {
   });
   const [error, setError] = useState('');
 
-  // Determinar o tipo de usuário baseado no contexto de autenticação
-  // Normalizar tipo para uppercase, traduzir para inglês, e usar fallback para cnpj
   let tipoNormalizado = (user?.tipo || '').toUpperCase();
   if (tipoNormalizado === 'EMPRESA') {
     tipoNormalizado = 'COMPANY';
@@ -70,8 +68,6 @@ export default function VantagemCRUD() {
   const isEmpresa = tipoNormalizado === 'COMPANY' || (user?.cnpj !== undefined && user?.cnpj !== null && user.cnpj !== '');
   const isAluno = tipoNormalizado === 'STUDENT';
 
-  // Para EMPRESA: usa empresaId da URL e chama getVantagens(empresaId)
-  // Para ALUNO: chama getAllVantagens() sem empresaId
   const { vantagens, isLoading, isError, error: fetchError, refetch } = useGetVantagens(
     isEmpresa ? empresaId : undefined
   );
@@ -174,14 +170,12 @@ export default function VantagemCRUD() {
   const handleConfirmResgato = () => {
     if (!vantagemToResgatar) return;
 
-    // Verificar se o usuário tem saldo suficiente
     if (balance < vantagemToResgatar.custo) {
       setError(`Saldo insuficiente. Você tem ${balance} moedas e precisa de ${vantagemToResgatar.custo}`);
       handleCloseConfirmResgato();
       return;
     }
 
-    // Realizar o resgate
     resgatar(vantagemToResgatar.id, {
       onSuccess: (data) => {
         setRegatoCupom(data.cupom);

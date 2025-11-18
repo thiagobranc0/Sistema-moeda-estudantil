@@ -35,7 +35,6 @@ export default function ProfessorDoar() {
   const { sendCoins, isSending } = useSendCoins(numProfessorId);
   const { sent, isLoading: loadingSent } = useGetSentByProfessor(numProfessorId);
 
-  // Normalizar tipo para uppercase
   let tipoNormalizado = (user?.tipo || '').toUpperCase();
   if (tipoNormalizado === 'PROFESSOR') {
     tipoNormalizado = 'PROFESSOR';

@@ -50,10 +50,8 @@ export default function Login() {
         cnpj: data.cnpj,
       });
       
-      // O id pode ser string ou número - mantém como está (pode ser UUID)
       const userId = data.id;
       
-      // Normalizar tipo para uppercase e traduzir para inglês
       let tipo = (data.tipo || '').toUpperCase().trim();
       if (tipo === 'EMPRESA') {
         tipo = 'COMPANY';
@@ -66,10 +64,8 @@ export default function Login() {
       console.log('Tipo normalizado:', tipo);
       console.log('UserId:', userId);
       
-      // Salvar dados do usuário no contexto (e localStorage via provider)
       setUser({ ...data, id: userId as any, tipo: tipo as any });
       
-      // Redirecionar baseado no tipo de usuário
       setError('');
       setHasRedirected(true);
       
