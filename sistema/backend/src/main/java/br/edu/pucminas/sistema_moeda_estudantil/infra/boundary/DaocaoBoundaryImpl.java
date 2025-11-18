@@ -41,7 +41,7 @@ public class DaocaoBoundaryImpl implements DoacaoBoundary {
 
     @Override
     public DoacaoDTO doar(DoacaoDTO doacaoDTO) {
-        if(!alunoRepository.existsById(doacaoDTO.getIdAluno())) {
+        if(!usuarioRepository.existsByEmail(doacaoDTO.getEmail())) {
             throw new UserNotFoundException("Aluno não encontrado!");
         }
 
@@ -57,9 +57,16 @@ public class DaocaoBoundaryImpl implements DoacaoBoundary {
         doador.setSaldo(doador.getSaldo().subtract(doacaoDTO.getValor()));
         professorRepository.save(doador);
 
-        Aluno destinatario = alunoRepository.findById(doacaoDTO.getIdAluno()).get();
+        var usuarioAluno = usuarioRepository.findByEmail(doacaoDTO.getEmail());
+
+        Aluno destinatario = alunoRepository.findById(usuarioRepository.findByEmail(doacaoDTO.getEmail()).getId()).get();
+        if(destinatario.getSaldo() == null) {
+            destinatario.setSaldo(BigDecimal.ZERO);
+        }
         destinatario.setSaldo(destinatario.getSaldo().add(doacaoDTO.getValor()));
         alunoRepository.save(destinatario);
+
+        doacaoDTO.setIdAluno(usuarioAluno.getId());
 
         var doacao = doacaoMapper.doacaoDTOToDoacaoEntity(doacaoDTO);
         doacao.setDataDoacao(LocalDateTime.now());
@@ -70,6 +77,8 @@ public class DaocaoBoundaryImpl implements DoacaoBoundary {
 
         doacaoDTO.setNomeAluno(usuarioRepository.findById(doacaoDTO.getIdAluno()).get().getNome());
         doacaoDTO.setNomeProfessor(usuarioRepository.findById(doacaoDTO.getIdProfessor()).get().getNome());
+
+        System.out.println(doacaoDTO);
 
         return doacaoDTO;
 
