@@ -20,7 +20,8 @@ export default function Header() {
   }
   const isEmpresa = tipoNormalizado === 'COMPANY' || (user?.cnpj !== undefined && user?.cnpj !== null && user.cnpj !== '');
   
-  const { balance } = useGetBalance(isEmpresa ? undefined : user?.id);
+  const { balance: fetchedBalance } = useGetBalance(isEmpresa ? undefined : user?.id);
+  const balance = user?.saldo ?? fetchedBalance ?? 0;
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);

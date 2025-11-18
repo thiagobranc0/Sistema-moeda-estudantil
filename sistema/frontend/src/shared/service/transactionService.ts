@@ -10,12 +10,13 @@ export interface UserBalance {
 
 export interface Doacao {
   id: string;
-  professorId: number;
-  alunoId: number;
-  alunoEmail?: string;
-  quantidade: number;
-  motivo?: string;
-  dataCriacao?: string;
+  idProfessor: string;
+  nomeProfessor: string;
+  idAluno: string;
+  nomeAluno: string;
+  mensagem: string;
+  valor: number;
+  dataDoacao: string;
 }
 
 export interface Transaction {
@@ -39,17 +40,17 @@ export const transactionService = {
     return response.data;
   },
 
-  getDoacoesAluno: async (alunoId: number): Promise<Doacao[]> => {
+  getDoacoesAluno: async (alunoId: string | number): Promise<Doacao[]> => {
     const response = await api.get<Doacao[]>(`/alunos/${alunoId}/doacoes`);
     return response.data;
   },
 
-  getDoacoesProfessor: async (professorId: number): Promise<Doacao[]> => {
+  getDoacoesProfessor: async (professorId: string | number): Promise<Doacao[]> => {
     const response = await api.get<Doacao[]>(`/professores/${professorId}/doacoes`);
     return response.data;
   },
 
-  enviarDoacao: async (professorId: number, payload: { alunoId?: number; alunoEmail?: string; quantidade: number; motivo: string; }): Promise<Doacao> => {
+  enviarDoacao: async (professorId: string | number, payload: { email: string; valor: number; mensagem: string }): Promise<Doacao> => {
     const response = await api.post<Doacao>(`/professores/${professorId}/doacoes`, payload);
     return response.data;
   },

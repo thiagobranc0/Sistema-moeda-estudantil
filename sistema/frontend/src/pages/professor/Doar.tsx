@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Container,
@@ -14,26 +15,31 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Pagination,
 } from '@mui/material';
 import { Send as SendIcon } from '@mui/icons-material';
 import { useAuth } from '../../shared/context/AuthContext';
 import Header from '../../shared/components/Header';
 import { useGetBalance, useSendCoins, useGetSentByProfessor } from '../transactions/hooks/useTransactions';
+import type { Doacao } from '../../shared/service/transactionService';
 
 export default function ProfessorDoar() {
   const { professorId } = useParams<{ professorId: string }>();
-  const numProfessorId = Number(professorId);
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [studentEmail, setStudentEmail] = useState('');
   const [amount, setAmount] = useState('');
   const [message, setMessage] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-  const { balance } = useGetBalance(numProfessorId);
-  const { sendCoins, isSending } = useSendCoins(numProfessorId);
-  const { sent, isLoading: loadingSent } = useGetSentByProfessor(numProfessorId);
+  const { balance: fetchedBalance } = useGetBalance(professorId);
+  const balance = user?.saldo ?? fetchedBalance ?? 0;
+  const { sendCoins, isSending } = useSendCoins(professorId);
+  const { doacoes: sent, isLoading: loadingSent } = useGetSentByProfessor(professorId);
 
   let tipoNormalizado = (user?.tipo || '').toUpperCase();
   if (tipoNormalizado === 'PROFESSOR') {
@@ -75,8 +81,38 @@ export default function ProfessorDoar() {
       return;
     }
 
+    const novaDoacao: Doacao = {
+      id: `temp-${Date.now()}`,
+      idProfessor: professorId || '',
+      nomeProfessor: user?.nome || 'Professor',
+      idAluno: '',
+      nomeAluno: studentEmail,
+      mensagem: message,
+      valor: numAmount,
+      dataDoacao: new Date().toISOString(),
+    };
+
+    const novoSaldo = balance - numAmount;
+
+    queryClient.setQueryData(
+      ['GET_DOACOES_PROFESSOR', professorId],
+      (oldData: Doacao[] | undefined) => {
+        return oldData ? [novaDoacao, ...oldData] : [novaDoacao];
+      }
+    );
+
+    queryClient.setQueryData(['GET_BALANCE', professorId], novoSaldo);
+
+    if (user) {
+      const usuarioAtualizado = {
+        ...user,
+        saldo: novoSaldo,
+      };
+      localStorage.setItem('currentUser', JSON.stringify(usuarioAtualizado));
+    }
+
     sendCoins(
-      { to: studentEmail, amount: numAmount, message },
+      { email: studentEmail, valor: numAmount, mensagem: message },
       {
         onSuccess: () => {
           setSuccessMessage(`${numAmount} moedas enviadas para ${studentEmail}`);
@@ -84,9 +120,17 @@ export default function ProfessorDoar() {
           setAmount('');
           setMessage('');
           handleCloseDialog();
-          setTimeout(() => setSuccessMessage(''), 5000);
+          setTimeout(() => {
+            setSuccessMessage('');
+            window.location.reload();
+          }, 2000);
         },
         onError: () => {
+          queryClient.invalidateQueries({ queryKey: ['GET_DOACOES_PROFESSOR', professorId] });
+          queryClient.invalidateQueries({ queryKey: ['GET_BALANCE', professorId] });
+          if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+          }
           setError('Erro ao enviar moedas. Tente novamente.');
         },
       }
@@ -216,29 +260,49 @@ export default function ProfessorDoar() {
             ) : sent.length === 0 ? (
               <Typography sx={{ color: '#b0b0b0' }}>Nenhuma moeda enviada ainda.</Typography>
             ) : (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {sent.map((t) => (
-                  <Box
-                    key={t.id}
-                    sx={{
-                      p: 2,
-                      bgcolor: '#252525',
-                      borderRadius: 1,
-                      borderLeft: '4px solid #f0f0f0',
-                    }}
-                  >
-                    <Typography sx={{ color: '#e0e0e0', fontWeight: 600 }}>
-                      +{t.quantidade} moedas para aluno {t.alunoId}
-                    </Typography>
-                    <Typography sx={{ color: '#b0b0b0', fontSize: '0.9rem' }}>
-                      {t.motivo || 'Sem motivo'}
-                    </Typography>
-                    <Typography sx={{ color: '#f0f0f0', fontSize: '0.8rem', mt: 1 }}>
-                      {t.dataCriacao ? new Date(t.dataCriacao).toLocaleDateString('pt-BR') : '-'}
-                    </Typography>
+              <>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
+                  {sent.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((t) => (
+                    <Box
+                      key={t.id}
+                      sx={{
+                        p: 2,
+                        bgcolor: '#252525',
+                        borderRadius: 1,
+                        borderLeft: '4px solid #f0f0f0',
+                      }}
+                    >
+                      <Typography sx={{ color: '#e0e0e0', fontWeight: 600 }}>
+                        +{t.valor} moedas para {t.nomeAluno}
+                      </Typography>
+                      <Typography sx={{ color: '#b0b0b0', fontSize: '0.9rem' }}>
+                        {t.mensagem || 'Sem mensagem'}
+                      </Typography>
+                      <Typography sx={{ color: '#f0f0f0', fontSize: '0.8rem', mt: 1 }}>
+                        {t.dataDoacao ? new Date(t.dataDoacao).toLocaleDateString('pt-BR') : '-'}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+                {Math.ceil(sent.length / itemsPerPage) > 1 && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                    <Pagination
+                      count={Math.ceil(sent.length / itemsPerPage)}
+                      page={currentPage}
+                      onChange={(_, page) => setCurrentPage(page)}
+                      sx={{
+                        '& .MuiPaginationItem-root': {
+                          color: '#b0b0b0',
+                        },
+                        '& .MuiPaginationItem-page.Mui-selected': {
+                          bgcolor: '#ff6b6b',
+                          color: '#fff',
+                        },
+                      }}
+                    />
                   </Box>
-                ))}
-              </Box>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

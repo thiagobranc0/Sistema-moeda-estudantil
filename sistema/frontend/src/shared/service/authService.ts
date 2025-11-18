@@ -15,6 +15,7 @@ export interface LoginResponse {
   departamentoId?: number;
   cnpj?: string;
   tipo: string;
+  saldo: number;
 }
 
 export const authService = {
