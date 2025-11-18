@@ -35,7 +35,14 @@ export default function ProfessorDoar() {
   const { sendCoins, isSending } = useSendCoins(numProfessorId);
   const { sent, isLoading: loadingSent } = useGetSentByProfessor(numProfessorId);
 
-  if (!professorId || !user || user.tipo !== 'PROFESSOR') {
+  // Normalizar tipo para uppercase
+  let tipoNormalizado = (user?.tipo || '').toUpperCase();
+  if (tipoNormalizado === 'PROFESSOR') {
+    tipoNormalizado = 'PROFESSOR';
+  }
+  const isProfessor = tipoNormalizado === 'PROFESSOR';
+
+  if (!professorId || !user || !isProfessor) {
     return (
       <Box sx={{ bgcolor: '#1a1a1a', minHeight: '100vh' }}>
         <Header />

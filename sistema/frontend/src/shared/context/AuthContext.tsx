@@ -15,10 +15,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem('currentUser');
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      // Garante que o id é número
-      if (parsed && parsed.id) {
-        parsed.id = Number(parsed.id);
-      }
+      // Mantém o id como está (pode ser UUID string ou número)
       return parsed;
     } catch {
       return null;

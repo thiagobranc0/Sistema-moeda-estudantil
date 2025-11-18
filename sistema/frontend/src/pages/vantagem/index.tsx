@@ -57,17 +57,25 @@ export default function VantagemCRUD() {
   });
   const [error, setError] = useState('');
 
-  // Determinar o tipo de usuário baseado nos dados armazenados no localStorage
-  const userDataStr = localStorage.getItem('userData');
-  const userData = userDataStr ? JSON.parse(userDataStr) : null;
-  const isEmpresa = userData?.cnpj !== undefined && userData?.cnpj !== null;
+  // Determinar o tipo de usuário baseado no contexto de autenticação
+  // Normalizar tipo para uppercase, traduzir para inglês, e usar fallback para cnpj
+  let tipoNormalizado = (user?.tipo || '').toUpperCase();
+  if (tipoNormalizado === 'EMPRESA') {
+    tipoNormalizado = 'COMPANY';
+  } else if (tipoNormalizado === 'ALUNO') {
+    tipoNormalizado = 'STUDENT';
+  } else if (tipoNormalizado === 'PROFESSOR') {
+    tipoNormalizado = 'PROFESSOR';
+  }
+  const isEmpresa = tipoNormalizado === 'COMPANY' || (user?.cnpj !== undefined && user?.cnpj !== null && user.cnpj !== '');
+  const isAluno = tipoNormalizado === 'STUDENT';
 
   // Para EMPRESA: usa empresaId da URL e chama getVantagens(empresaId)
   // Para ALUNO: chama getAllVantagens() sem empresaId
   const { vantagens, isLoading, isError, error: fetchError, refetch } = useGetVantagens(
     isEmpresa ? empresaId : undefined
   );
-  const { balance } = useGetBalance(user?.id);
+  const { balance } = useGetBalance(isEmpresa ? undefined : user?.id);
   const { resgatar, isResgatando } = useResgatarVantagem(user?.id);
   const { createVantagem, isLoading: isCreating, isSuccess: createSuccess } = useCreateVantagem();
   const { updateVantagem, isLoading: isUpdating, isSuccess: updateSuccess } = useUpdateVantagem();
@@ -322,7 +330,7 @@ export default function VantagemCRUD() {
                       </IconButton>
                     </CardActions>
                   )}
-                  {!isEmpresa && (
+                  {isAluno && (
                     <CardActions sx={{ justifyContent: 'center', p: 2 }}>
                       <Button
                         variant="contained"

@@ -5,7 +5,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  id: number;
+  id: number | string;
   nome: string;
   email: string;
   senha: string;
@@ -14,7 +14,7 @@ export interface LoginResponse {
   endereco: string;
   departamentoId?: number;
   cnpj?: string;
-  tipo: 'PROFESSOR' | 'STUDENT' | 'COMPANY';
+  tipo: string;
 }
 
 export const authService = {
