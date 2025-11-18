@@ -57,17 +57,22 @@ export default function VantagemCRUD() {
   });
   const [error, setError] = useState('');
 
-  // Determinar o tipo de usuário baseado nos dados armazenados no localStorage
-  const userDataStr = localStorage.getItem('userData');
-  const userData = userDataStr ? JSON.parse(userDataStr) : null;
-  const isEmpresa = userData?.cnpj !== undefined && userData?.cnpj !== null;
+  let tipoNormalizado = (user?.tipo || '').toUpperCase();
+  if (tipoNormalizado === 'EMPRESA') {
+    tipoNormalizado = 'COMPANY';
+  } else if (tipoNormalizado === 'ALUNO') {
+    tipoNormalizado = 'STUDENT';
+  } else if (tipoNormalizado === 'PROFESSOR') {
+    tipoNormalizado = 'PROFESSOR';
+  }
+  const isEmpresa = tipoNormalizado === 'COMPANY' || (user?.cnpj !== undefined && user?.cnpj !== null && user.cnpj !== '');
+  const isAluno = tipoNormalizado === 'STUDENT';
 
-  // Para EMPRESA: usa empresaId da URL e chama getVantagens(empresaId)
-  // Para ALUNO: chama getAllVantagens() sem empresaId
   const { vantagens, isLoading, isError, error: fetchError, refetch } = useGetVantagens(
     isEmpresa ? empresaId : undefined
   );
-  const { balance } = useGetBalance(user?.id);
+  const { balance: fetchedBalance } = useGetBalance(isEmpresa ? undefined : user?.id);
+  const balance = user?.saldo ?? fetchedBalance ?? 0;
   const { resgatar, isResgatando } = useResgatarVantagem(user?.id);
   const { createVantagem, isLoading: isCreating, isSuccess: createSuccess } = useCreateVantagem();
   const { updateVantagem, isLoading: isUpdating, isSuccess: updateSuccess } = useUpdateVantagem();
@@ -166,14 +171,12 @@ export default function VantagemCRUD() {
   const handleConfirmResgato = () => {
     if (!vantagemToResgatar) return;
 
-    // Verificar se o usuário tem saldo suficiente
     if (balance < vantagemToResgatar.custo) {
       setError(`Saldo insuficiente. Você tem ${balance} moedas e precisa de ${vantagemToResgatar.custo}`);
       handleCloseConfirmResgato();
       return;
     }
 
-    // Realizar o resgate
     resgatar(vantagemToResgatar.id, {
       onSuccess: (data) => {
         setRegatoCupom(data.cupom);
@@ -322,7 +325,7 @@ export default function VantagemCRUD() {
                       </IconButton>
                     </CardActions>
                   )}
-                  {!isEmpresa && (
+                  {isAluno && (
                     <CardActions sx={{ justifyContent: 'center', p: 2 }}>
                       <Button
                         variant="contained"
@@ -455,58 +458,59 @@ export default function VantagemCRUD() {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={openConfirmResgatoDialog} onClose={handleCloseConfirmResgato} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#6C3751', fontWeight: 600 }}>
+        <Dialog open={openConfirmResgatoDialog} onClose={handleCloseConfirmResgato} maxWidth="sm" fullWidth
+          PaperProps={{ sx: { bgcolor: '#2d2d2d', color: '#e0e0e0' } }}>
+          <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#ff6b6b', fontWeight: 600, borderBottomColor: '#4a4a4a', borderBottomWidth: 1, borderBottomStyle: 'solid' }}>
             <WarningIcon />
             Confirmar Resgate
           </DialogTitle>
           <DialogContent sx={{ pt: 3 }}>
             {vantagemToResgatar && (
               <Box sx={{ textAlign: 'center' }}>
-                <Typography sx={{ mb: 2, fontSize: '0.95rem' }}>
+                <Typography sx={{ mb: 2, fontSize: '0.95rem', color: '#e0e0e0' }}>
                   Você deseja resgatar a vantagem:
                 </Typography>
-                <Typography sx={{ fontWeight: 600, fontSize: '1.1rem', mb: 3, color: '#463a4dff' }}>
+                <Typography sx={{ fontWeight: 600, fontSize: '1.1rem', mb: 3, color: '#f0f0f0' }}>
                   {vantagemToResgatar.descricao}
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 3 }}>
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 1 }}>
+                    <Typography sx={{ fontSize: '0.85rem', color: '#b0b0b0', mb: 1 }}>
                       Custo
                     </Typography>
-                    <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: '#6C3751' }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: '#ff6b6b' }}>
                       {vantagemToResgatar.custo}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.75rem', color: '#666' }}>
+                    <Typography sx={{ fontSize: '0.75rem', color: '#b0b0b0' }}>
                       moedas
                     </Typography>
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 1 }}>
+                    <Typography sx={{ fontSize: '0.85rem', color: '#b0b0b0', mb: 1 }}>
                       Seu Saldo
                     </Typography>
-                    <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: balance >= vantagemToResgatar.custo ? '#4CAF50' : '#f44336' }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: balance >= vantagemToResgatar.custo ? '#8FBC8F' : '#ff6b6b' }}>
                       {balance}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.75rem', color: '#666' }}>
+                    <Typography sx={{ fontSize: '0.75rem', color: '#b0b0b0' }}>
                       moedas
                     </Typography>
                   </Box>
                 </Box>
                 {balance >= vantagemToResgatar.custo ? (
-                  <Alert severity="success">
+                  <Alert severity="success" sx={{ bgcolor: '#1e5e20', color: '#8FBC8F', border: '1px solid #8FBC8F' }}>
                     Você tem saldo suficiente para realizar este resgate.
                   </Alert>
                 ) : (
-                  <Alert severity="error">
+                  <Alert severity="error" sx={{ bgcolor: '#3d2020', color: '#ff6b6b', border: '1px solid #ff6b6b' }}>
                     Saldo insuficiente! Você precisa de {vantagemToResgatar.custo - balance} moedas a mais.
                   </Alert>
                 )}
               </Box>
             )}
           </DialogContent>
-          <DialogActions sx={{ p: 3, justifyContent: 'space-between' }}>
-            <Button onClick={handleCloseConfirmResgato} disabled={isResgatando}>
+          <DialogActions sx={{ p: 3, justifyContent: 'space-between', borderTopColor: '#4a4a4a', borderTopWidth: 1, borderTopStyle: 'solid' }}>
+            <Button onClick={handleCloseConfirmResgato} disabled={isResgatando} sx={{ color: '#b0b0b0' }}>
               Cancelar
             </Button>
             <Button

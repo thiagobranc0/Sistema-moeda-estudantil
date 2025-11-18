@@ -10,12 +10,13 @@ export interface UserBalance {
 
 export interface Doacao {
   id: string;
-  professorId: number;
-  alunoId: number;
-  alunoEmail?: string;
-  quantidade: number;
-  motivo?: string;
-  dataCriacao?: string;
+  idProfessor: string;
+  nomeProfessor: string;
+  idAluno: string;
+  nomeAluno: string;
+  mensagem: string;
+  valor: number;
+  dataDoacao: string;
 }
 
 export interface Transaction {
@@ -29,32 +30,27 @@ export interface Transaction {
 }
 
 export const transactionService = {
-  // Get user balance
   getBalance: async (userId: number): Promise<number> => {
     const response = await api.get<UserBalance>(`/usuarios/${userId}`);
     return response.data.saldo;
   },
 
-  // Get user info including balance
   getUserInfo: async (userId: number): Promise<UserBalance> => {
     const response = await api.get<UserBalance>(`/usuarios/${userId}`);
     return response.data;
   },
 
-  // Get doacoes received by student
-  getDoacoesAluno: async (alunoId: number): Promise<Doacao[]> => {
+  getDoacoesAluno: async (alunoId: string | number): Promise<Doacao[]> => {
     const response = await api.get<Doacao[]>(`/alunos/${alunoId}/doacoes`);
     return response.data;
   },
 
-  // Get doacoes sent by professor
-  getDoacoesProfessor: async (professorId: number): Promise<Doacao[]> => {
+  getDoacoesProfessor: async (professorId: string | number): Promise<Doacao[]> => {
     const response = await api.get<Doacao[]>(`/professores/${professorId}/doacoes`);
     return response.data;
   },
 
-  // Professor sends coins (doação) to a student
-  enviarDoacao: async (professorId: number, payload: { alunoId?: number; alunoEmail?: string; quantidade: number; motivo: string; }): Promise<Doacao> => {
+  enviarDoacao: async (professorId: string | number, payload: { email: string; valor: number; mensagem: string }): Promise<Doacao> => {
     const response = await api.post<Doacao>(`/professores/${professorId}/doacoes`, payload);
     return response.data;
   },

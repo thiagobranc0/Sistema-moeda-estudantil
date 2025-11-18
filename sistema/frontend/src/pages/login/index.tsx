@@ -28,6 +28,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [hasRedirected, setHasRedirected] = useState(false);
   const navigate = useNavigate();
 
   const { login, isLoading, isError, error: loginError, isSuccess, data } = useLogin();
@@ -40,25 +41,51 @@ export default function Login() {
   }, [isError, loginError]);
 
   useEffect(() => {
-    if (isSuccess && data) {
+    if (isSuccess && data && !hasRedirected) {
       console.log('Login realizado com sucesso:', {
         id: data.id,
         nome: data.nome,
         email: data.email,
-        cpf: data.cpf,
-        rg: data.rg,
-        endereco: data.endereco,
-        departamentoId: data.departamentoId,
+        tipo: data.tipo,
         cnpj: data.cnpj,
       });
       
-      // Salvar dados do usuário no contexto (e localStorage via provider)
-      setUser(data);
+      const userId = data.id;
+      
+      let tipo = (data.tipo || '').toUpperCase().trim();
+      if (tipo === 'EMPRESA') {
+        tipo = 'COMPANY';
+      } else if (tipo === 'ALUNO') {
+        tipo = 'STUDENT';
+      } else if (tipo === 'PROFESSOR') {
+        tipo = 'PROFESSOR';
+      }
+      
+      console.log('Tipo normalizado:', tipo);
+      console.log('UserId:', userId);
+      
+      setUser({ ...data, id: userId as any, tipo: tipo as any });
       
       setError('');
-      navigate(`/vantagens/${data.id}`);
+      setHasRedirected(true);
+      
+      setTimeout(() => {
+        if (tipo === 'COMPANY') {
+          console.log('Redirecionando para vantagens com ID:', userId);
+          navigate(`/vantagens/${userId}`);
+        } else if (tipo === 'PROFESSOR') {
+          console.log('Redirecionando para professor com ID:', userId);
+          navigate(`/professor/${userId}/doar`);
+        } else if (tipo === 'STUDENT') {
+          console.log('Redirecionando para extrato com ID:', userId);
+          navigate(`/extrato/${userId}`);
+        } else {
+          console.error('Tipo de usuário desconhecido:', tipo);
+          setError('Tipo de usuário não reconhecido');
+        }
+      }, 100);
     }
-  }, [isSuccess, data, navigate]);
+  }, [isSuccess, data, navigate, setUser, hasRedirected]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

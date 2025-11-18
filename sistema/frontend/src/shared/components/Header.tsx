@@ -7,10 +7,21 @@ import { useState } from 'react';
 
 export default function Header() {
   const { user, setUser } = useAuth();
-  const { balance } = useGetBalance(user?.id ?? undefined);
   const navigate = useNavigate();
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  // Determinar o tipo de usuário - normalizar para uppercase, traduzir para inglês, e usar fallback para cnpj
+  let tipoNormalizado = (user?.tipo || '').toUpperCase();
+  if (tipoNormalizado === 'EMPRESA') {
+    tipoNormalizado = 'COMPANY';
+  } else if (tipoNormalizado === 'ALUNO') {
+    tipoNormalizado = 'STUDENT';
+  }
+  const isEmpresa = tipoNormalizado === 'COMPANY' || (user?.cnpj !== undefined && user?.cnpj !== null && user.cnpj !== '');
+  
+  const { balance: fetchedBalance } = useGetBalance(isEmpresa ? undefined : user?.id);
+  const balance = user?.saldo ?? fetchedBalance ?? 0;
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
@@ -32,7 +43,7 @@ export default function Header() {
   return (
     <AppBar position="sticky" sx={{ bgcolor: '#2d2d2d', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
       <Toolbar>
-        {user && (
+        {user && !isEmpresa && (
           <Box sx={{ display: 'flex', gap: 4, mr: 'auto' }}>
             <Button
               onClick={() => navigate(`/vantagens/${user.id}`)}
@@ -90,16 +101,48 @@ export default function Header() {
           </Box>
         )}
 
+        {user && isEmpresa && (
+          <Box sx={{ display: 'flex', gap: 4, mr: 'auto' }}>
+            <Button
+              sx={{
+                color: '#f0f0f0',
+                fontWeight: 600,
+                fontSize: '1rem',
+                textTransform: 'none',
+                position: 'relative',
+                pb: 0.5,
+                p: 0,
+                minWidth: 'auto',
+                '&:hover': { bgcolor: 'transparent' },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: -8,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  bgcolor: isVantagensActive ? '#ff6b6b' : 'transparent',
+                  transition: 'all 0.3s ease',
+                },
+              }}
+            >
+              Vantagens
+            </Button>
+          </Box>
+        )}
+
         {user && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography sx={{ color: '#e0e0e0', fontWeight: 600 }}>
-                Moedas:
-              </Typography>
-              <Typography sx={{ color: '#f0f0f0', fontWeight: 700, fontSize: '1.1rem' }}>
-                {balance}
-              </Typography>
-            </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, ml: 'auto' }}>
+            {!isEmpresa && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography sx={{ color: '#e0e0e0', fontWeight: 600 }}>
+                  Moedas:
+                </Typography>
+                <Typography sx={{ color: '#f0f0f0', fontWeight: 700, fontSize: '1.1rem' }}>
+                  {balance}
+                </Typography>
+              </Box>
+            )}
 
             {user.tipo === 'PROFESSOR' && (
               <Button
