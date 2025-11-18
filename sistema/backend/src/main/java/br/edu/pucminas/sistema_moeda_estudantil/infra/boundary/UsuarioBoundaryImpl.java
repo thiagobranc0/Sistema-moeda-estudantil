@@ -1,5 +1,6 @@
 package br.edu.pucminas.sistema_moeda_estudantil.infra.boundary;
 
+import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Aluno;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.enums.TipoUsuario;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.mapper.UsuarioMapper;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.boundary.UsuarioBoundary;
@@ -11,6 +12,7 @@ import br.edu.pucminas.sistema_moeda_estudantil.model.repository.UsuarioReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -45,6 +47,13 @@ public class UsuarioBoundaryImpl implements UsuarioBoundary {
                 usuarioUpdateDTO.setCpf(aluno.getCpf());
                 usuarioUpdateDTO.setRg(aluno.getRg());
                 usuarioUpdateDTO.setEndereco(aluno.getEndereco());
+                Aluno usuarioSalvo = alunoRepository.findById(id).get();
+                if(usuarioSalvo.getSaldo() == null) {
+                    usuarioSalvo.setSaldo(BigDecimal.ZERO);
+                }
+
+                usuarioUpdateDTO.setSaldo(usuarioSalvo.getSaldo().doubleValue());
+                System.out.println(usuarioUpdateDTO.getSaldo());
             });
         } else if (usuario.get().getTipo() == TipoUsuario.EMPRESA) {
             empresaRepository.findById(id).ifPresent(empresa -> {
