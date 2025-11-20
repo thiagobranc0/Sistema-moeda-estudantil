@@ -2,6 +2,7 @@ package br.edu.pucminas.sistema_moeda_estudantil.infra.handler;
 
 import br.edu.pucminas.sistema_moeda_estudantil.model.ErrorResponse;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.EmpresaForbiddenException;
+import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.SaldoInsuficienteException;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.UserNotFoundException;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.exceptions.ValorInvalidoException;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValorInvalidoException.class)
     public ResponseEntity<ErrorResponse> handleValorInvalidoException(ValorInvalidoException exception) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                exception.getMessage()
+        ).timestamp(OffsetDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(error);
+    }
+
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity<ErrorResponse> handleSaldoInsuficienteException(SaldoInsuficienteException exception) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_ACCEPTABLE.value(),
                 exception.getMessage()
