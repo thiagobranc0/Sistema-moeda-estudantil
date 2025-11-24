@@ -8,9 +8,9 @@ services:
     ports:
       - '5433:5432'
 
-    volumes:
-      - ./data:/var/opt/postgres/data
-      - ./log:/var/opt/postgres/log
+#    volumes:
+#      - ./data:/var/opt/postgres/data
+#      - ./log:/var/opt/postgres/log
   app:
     build: .
     ports:
@@ -24,5 +24,5 @@ services:
       - SPRING_CONFIG_IMPORT=optional:file:.env[.properties]
       - SPRING_CONFIG_ADDITIONAL_LOCATION=optional:file:.env
 
-    volumes:
-      - ./data:/var/opt/postgres/data
+#    volumes:
+#      - ./data:/var/opt/postgres/data

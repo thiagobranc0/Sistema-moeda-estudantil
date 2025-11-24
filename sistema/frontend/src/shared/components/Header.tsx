@@ -39,6 +39,7 @@ export default function Header() {
 
   const isVantagensActive = location.pathname.includes('/vantagens');
   const isExtratoActive = location.pathname.includes('/extrato');
+  const isResgatesActive = location.pathname.includes('/resgates');
 
   return (
     <AppBar position="sticky" sx={{ bgcolor: '#2d2d2d', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
@@ -97,6 +98,33 @@ export default function Header() {
               }}
             >
               Extrato
+            </Button>
+
+            <Button
+              onClick={() => navigate('/resgates')}
+              sx={{
+                color: '#f0f0f0',
+                fontWeight: 600,
+                fontSize: '1rem',
+                textTransform: 'none',
+                position: 'relative',
+                pb: 0.5,
+                p: 0,
+                minWidth: 'auto',
+                '&:hover': { bgcolor: 'transparent' },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: -8,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  bgcolor: isResgatesActive ? '#ff6b6b' : 'transparent',
+                  transition: 'all 0.3s ease',
+                },
+              }}
+            >
+              Meus Resgates
             </Button>
           </Box>
         )}

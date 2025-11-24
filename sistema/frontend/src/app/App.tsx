@@ -3,6 +3,7 @@ import Login from '../pages/login';
 import Vantagem from '../pages/vantagem';
 import ProfessorDoar from '../pages/professor/Doar';
 import Extrato from '../pages/transactions/Extrato';
+import Resgates from '../pages/transactions/Resgates';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/vantagens/:empresaId" element={<Vantagem />} />
         <Route path="/professor/:professorId/doar" element={<ProfessorDoar />} />
         <Route path="/extrato/:userId" element={<Extrato />} />
+        <Route path="/resgates" element={<Resgates />} />
       </Routes>
     </BrowserRouter>
   );

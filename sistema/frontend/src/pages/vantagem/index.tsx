@@ -19,6 +19,7 @@ import {
   Alert,
   IconButton,
   Chip,
+  Snackbar,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -40,13 +41,12 @@ import Header from '../../shared/components/Header';
 
 export default function VantagemCRUD() {
   const { empresaId } = useParams<{ empresaId: string }>(); 
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openResgatoDialog, setOpenResgatoDialog] = useState(false);
   const [openConfirmResgatoDialog, setOpenConfirmResgatoDialog] = useState(false);
-  const [resgatoMensagem, setResgatoMensagem] = useState('');
-  const [regatoCupom, setRegatoCupom] = useState('');
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const [vantagemToDelete, setVantagemToDelete] = useState<string | null>(null);
   const [vantagemToResgatar, setVantagemToResgatar] = useState<Vantagem | null>(null);
   const [editingVantagem, setEditingVantagem] = useState<Vantagem | null>(null);
@@ -73,7 +73,7 @@ export default function VantagemCRUD() {
   );
   const { balance: fetchedBalance } = useGetBalance(isEmpresa ? undefined : user?.id);
   const balance = user?.saldo ?? fetchedBalance ?? 0;
-  const { resgatar, isResgatando } = useResgatarVantagem(user?.id);
+  const { resgatar, isResgatando } = useResgatarVantagem(isAluno ? user?.email : undefined);
   const { createVantagem, isLoading: isCreating, isSuccess: createSuccess } = useCreateVantagem();
   const { updateVantagem, isLoading: isUpdating, isSuccess: updateSuccess } = useUpdateVantagem();
   const { deleteVantagem, isLoading: isDeleting } = useDeleteVantagem();
@@ -179,11 +179,25 @@ export default function VantagemCRUD() {
 
     resgatar(vantagemToResgatar.id, {
       onSuccess: (data) => {
-        setRegatoCupom(data.cupom);
-        setResgatoMensagem(data.mensagem || 'Vantagem resgatada com sucesso!');
-        setOpenResgatoDialog(true);
+        // Atualizar estado do Zustand/Context com novo saldo
+        const newBalance = balance - vantagemToResgatar.custo;
+        if (user) {
+          const usuarioAtualizado = {
+            ...user,
+            saldo: newBalance,
+          };
+          setUser(usuarioAtualizado);
+          localStorage.setItem('currentUser', JSON.stringify(usuarioAtualizado));
+        }
+        
+        setToastMessage(data.mensagem || 'Vantagem resgatada com sucesso!');
+        setToastOpen(true);
         handleCloseConfirmResgato();
-        refetch();
+        
+        // Recarregar página após 2 segundos para atualizar saldo
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       },
       onError: (error: any) => {
         setError(error?.message || 'Erro ao resgatar vantagem');
@@ -536,57 +550,20 @@ export default function VantagemCRUD() {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={openResgatoDialog} onClose={() => setOpenResgatoDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ textAlign: 'center', fontWeight: 600 }}>
-            ✓ Cupom de Resgate
-          </DialogTitle>
-          <DialogContent sx={{ pt: 3, textAlign: 'center' }}>
-            <Typography sx={{ mb: 3, fontSize: '0.95rem' }}>
-              {resgatoMensagem}
-            </Typography>
-            <Box
-              sx={{
-                p: 2,
-                bgcolor: '#2d2d2d',
-                borderRadius: 1,
-                border: '2px solid #f0f0f0',
-              }}
-            >
-              <Typography sx={{ fontSize: '0.75rem', color: '#e0e0e0', mb: 1 }}>
-                Código do Cupom
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
-                  color: '#f0f0f0',
-                  fontFamily: 'monospace',
-                  letterSpacing: 2,
-                }}
-              >
-                {regatoCupom}
-              </Typography>
-            </Box>
-            <Typography sx={{ mt: 3, fontSize: '0.85rem', color: '#e0e0e0' }}>
-              Apresente este código no local indicado para validar seu resgate.
-            </Typography>
-          </DialogContent>
-          <DialogActions sx={{ p: 2, justifyContent: 'center' }}>
-            <Button
-              onClick={() => setOpenResgatoDialog(false)}
-              variant="contained"
-              sx={{
-                bgcolor: '#f0f0f0',
-                color: '#000',
-                '&:hover': {
-                  bgcolor: '#e0e0e0',
-                },
-              }}
-            >
-              Fechar
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <Snackbar
+          open={toastOpen}
+          autoHideDuration={4000}
+          onClose={() => setToastOpen(false)}
+          message={toastMessage}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          sx={{
+            '& .MuiSnackbarContent-root': {
+              bgcolor: '#4caf50',
+              color: '#fff',
+              fontWeight: 600,
+            },
+          }}
+        />
       </Container>
     </Box>
   );

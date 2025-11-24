@@ -42,8 +42,8 @@ export const vantagemService = {
     await api.delete(`/empresa/${empresaId}/vantagens/${vantagemId}`);
   },
 
-  resgatar: async (alunoId: string, vantagemId: string): Promise<{ cupom: string; mensagem: string }> => {
-    const response = await api.post<{ cupom: string; mensagem: string }>(`/alunos/${alunoId}/vantagens/${vantagemId}/resgatar`, {});
+  resgatar: async (emailAluno: string, vantagemId: string): Promise<{ cupom: string; mensagem: string; saldoAtual?: number }> => {
+    const response = await api.post<{ cupom: string; mensagem: string; saldoAtual?: number }>(`/alunos/${emailAluno}/resgates/${vantagemId}`, {});
     return response.data;
   },
 };
