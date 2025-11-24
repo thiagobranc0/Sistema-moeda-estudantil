@@ -78,8 +78,6 @@ public class DaocaoBoundaryImpl implements DoacaoBoundary {
         doacaoDTO.setNomeAluno(usuarioRepository.findById(doacaoDTO.getIdAluno()).get().getNome());
         doacaoDTO.setNomeProfessor(usuarioRepository.findById(doacaoDTO.getIdProfessor()).get().getNome());
 
-        System.out.println(doacaoDTO);
-
         return doacaoDTO;
 
     }

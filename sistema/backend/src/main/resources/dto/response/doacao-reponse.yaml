@@ -18,11 +18,6 @@ components:
           type: string
           description: Nome do professor doador
           example: "Hugo de Paula"
-        saldo:
-          type: number
-          format: double
-          description: Valor da doação (em moedas).
-          example: 50.0
         idAluno:
           type: string
           format: uuid

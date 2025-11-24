@@ -9,3 +9,11 @@ spring:
     password: postgres
     enabled: true
     clean-disabled: false
+  mail:
+    host:
+    port:
+    username:
+    password:
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
