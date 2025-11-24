@@ -15,7 +15,7 @@ public class UsuarioUpdateDTO {
     private String email;
     private String senha;
     private TipoUsuario tipo;
-
+    private Double saldo;
 
     private String cpf;
     private String rg;

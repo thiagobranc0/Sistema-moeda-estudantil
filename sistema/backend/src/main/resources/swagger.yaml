@@ -464,3 +464,61 @@ paths:
             application/json:
               schema:
                 $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+  /alunos/{alunoEmail}/resgates/{vantagemId}:
+    post:
+      tags:
+        - Resgate
+      operationId: redeem
+      summary: Aluno resgata uma vantagem
+      parameters:
+        - name: alunoEmail
+          in: path
+          required: true
+          schema:
+            type: String
+        - name: vantagemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Registro de vantagem resgatada pelo aluno
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/resgate-aluno-response.yaml#/components/schemas/ResgateAlunoResponseDTO'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'
+  /alunos/{alunoEmail}/resgates:
+    get:
+      tags:
+        - Resgate
+      operationId: getPreviousRedeems
+      summary: Aluno resgata uma vantagem
+      parameters:
+        - name: alunoEmail
+          in: path
+          required: true
+          schema:
+            type: String
+      responses:
+        '200':
+          description: Registro de vantagem resgatada pelo aluno
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './dto/response/resgate-aluno-response.yaml#/components/schemas/ResgateAlunoResponseDTO'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: './dto/response/error-response.yaml#/components/schemas/ErrorResponse'

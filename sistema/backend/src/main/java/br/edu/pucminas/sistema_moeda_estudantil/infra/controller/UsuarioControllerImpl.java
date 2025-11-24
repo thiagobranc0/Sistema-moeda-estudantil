@@ -33,6 +33,7 @@ public class UsuarioControllerImpl implements UserApi {
     public ResponseEntity<UsuarioUpdateResponseDTO> getUserById(UUID id) {
         var usuarioDTO = usuarioService.getUsuarioById(id);
         var userUpdateResponseDTO = usuarioMapper.toUsuarioUpdateResponseDTO(usuarioDTO);
+        userUpdateResponseDTO.setSaldo(usuarioDTO.getSaldo().doubleValue());
         return ResponseEntity.ok(userUpdateResponseDTO);
     }
 
