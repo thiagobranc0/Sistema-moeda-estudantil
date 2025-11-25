@@ -15,7 +15,7 @@ public class DoacaoService {
     private DoacaoBoundary doacaoBoundary;
 
     public DoacaoDTO doar(DoacaoDTO doacaoDTO){
-        return doacaoBoundary.doar(doacaoDTO);
+        return doacaoBoundary.donate(doacaoDTO);
     }
 
     public List<DoacaoDTO> getProfessorDonations(UUID professorId) {

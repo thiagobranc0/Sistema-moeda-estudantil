@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DoacaoBoundary {
-    DoacaoDTO doar(DoacaoDTO doacaoDTO);
+    DoacaoDTO donate(DoacaoDTO doacaoDTO);
 
     List<DoacaoDTO> getProfessorDonations(UUID professorId);
 
