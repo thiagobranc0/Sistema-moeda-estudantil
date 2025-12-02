@@ -40,7 +40,7 @@ public class DaocaoBoundaryImpl implements DoacaoBoundary {
     private DoacaoRepository doacaoRepository;
 
     @Override
-    public DoacaoDTO doar(DoacaoDTO doacaoDTO) {
+    public DoacaoDTO donate(DoacaoDTO doacaoDTO) {
         if(!usuarioRepository.existsByEmail(doacaoDTO.getEmail())) {
             throw new UserNotFoundException("Aluno não encontrado!");
         }

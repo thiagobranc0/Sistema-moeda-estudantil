@@ -1,5 +1,6 @@
 package br.edu.pucminas.sistema_moeda_estudantil.infra.boundary;
 
+import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Empresa;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Vantagem;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.mapper.VantagemMapper;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.boundary.VantagemBoundary;
@@ -125,5 +126,10 @@ public class VantagemBoundaryImpl implements VantagemBoundary {
 
         return vantagemMapper.vantagemToVantagemDTOComId(updatedVantagem);
 
+    }
+
+    @Override
+    public Empresa getEmpresaByVantagemId(UUID vantagemId) {
+        return vantagemRepository.findById(vantagemId).get().getEmpresa();
     }
 }
