@@ -1,5 +1,6 @@
 package br.edu.pucminas.sistema_moeda_estudantil.model.domain.boundary;
 
+import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Empresa;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.VantagemDTO;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface VantagemBoundary {
     VantagemDTO updateVantagem(UUID empresaId, UUID vantagemId, VantagemDTO vantagemDTO);
 
     List<VantagemDTO> listAllVantagens();
+
+    Empresa getEmpresaByVantagemId(UUID vantagemId);
 }

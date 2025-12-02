@@ -2,6 +2,7 @@ package br.edu.pucminas.sistema_moeda_estudantil.model.domain.service;
 
 
 import br.edu.pucminas.sistema_moeda_estudantil.infra.boundary.VantagemBoundaryImpl;
+import br.edu.pucminas.sistema_moeda_estudantil.infra.entity.Empresa;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.VantagemDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,9 @@ public class VantagemService {
 
     public VantagemDTO updateVantagem(UUID empresaId, UUID vantagemId, VantagemDTO vantagem) {
         return vantagemBoundaryImpl.updateVantagem(empresaId, vantagemId, vantagem);
+    }
+
+    public Empresa getEmpresaByVantagemId(UUID vantagemId) {
+        return vantagemBoundaryImpl.getEmpresaByVantagemId(vantagemId);
     }
 }

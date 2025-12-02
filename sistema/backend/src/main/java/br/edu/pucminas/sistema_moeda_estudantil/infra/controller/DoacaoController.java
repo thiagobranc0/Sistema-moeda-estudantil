@@ -6,7 +6,6 @@ import br.edu.pucminas.sistema_moeda_estudantil.controller.DoacaoApi;
 import br.edu.pucminas.sistema_moeda_estudantil.infra.mapper.DoacaoMapper;
 import br.edu.pucminas.sistema_moeda_estudantil.model.DoacaoRequestDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.DoacaoResponseDTO;
-import br.edu.pucminas.sistema_moeda_estudantil.model.domain.dto.DoacaoDTO;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.service.DoacaoService;
 import br.edu.pucminas.sistema_moeda_estudantil.model.domain.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class DoacaoController implements DoacaoApi {
         doacaoDTO.setIdProfessor(professorId);
         doacaoDTO = doacaoService.doar(doacaoDTO);
         var doacaoResponseDTO = doacaoMapper.doacaoDTOToDoacaoResponseDTO(doacaoDTO);
-        emailService.sendDonationReceivedNotification(doacaoRequestDTO.getEmail());
+        emailService.sendDonationReceivedNotification(doacaoRequestDTO.getEmail(), doacaoResponseDTO.getNomeProfessor(), doacaoResponseDTO.getMensagem(), doacaoResponseDTO.getValor());
         return ResponseEntity.ok(doacaoResponseDTO);
     }
 
